@@ -11,6 +11,8 @@ function Frame() {
   this.blockHeight;
   this.blockWidth;
 
+  this.currentBlock;
+
   this.stopAuto = 0;
 };
 
@@ -44,11 +46,10 @@ Frame.prototype.getSize = function() {
         "\nBlockHeight: " + this.blockHeight + " BlockWidth: " + this.blockWidth);
 };
 
-Frame.prototype.draw = function() {
+Frame.prototype.draw = function(deltaX, deltaY) {
   this.drawSquare(this.x, this.y);
-  ++this.x;
-  //this.x += this.blockWidth;
-  //this.y += this.blockHeight;
+  if (!isNaN(deltaX)) this.x += deltaX;
+  if (!isNaN(deltaY)) this.y += deltaY;
 };
 
 /* Clears all drawn elements from the canvas */
@@ -61,6 +62,19 @@ Frame.prototype.reset = function() {
   this.y = 0;
 };
 
+Frame.prototype.drawBlock = function(block) {
+  if (typeof block === "undefined") return;
+  
+  this.currentBlock = block;
+  var startX = 0;
+  var startY = this.height - this.currentBlock.MATRIX_SIZE * this.blockHeight;
+  for (var r = 0; r < this.currentBlock.MATRIX_SIZE; ++r) {
+  	for (var c = 0; c < this.currentBlock.MATRIX_SIZE; ++c) {
+  	  if (this.currentBlock.matrix[r][c] != 0) this.drawSquare(startX + c * this.blockWidth, startY + r * this.blockHeight);
+    };
+  };
+};
+
 Frame.prototype.autoDraw = function() {
   var frame = this;
   
@@ -68,7 +82,7 @@ Frame.prototype.autoDraw = function() {
   if (Math.round(this.x) >= this.width) {
     this.reset();
   };
-  this.draw();
+  this.draw(1);
   this.stopAuto = requestAnimFrame(function() {frame.autoDraw()});
 };
 

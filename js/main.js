@@ -7,7 +7,7 @@ var main = function() {
     frame.getSize();
   });
   $("#draw").click(function() {
-    frame.draw();
+    frame.draw(frame.blockWidth);
   });
   $("#clear").click(function() {
     frame.clear();
@@ -18,8 +18,21 @@ var main = function() {
   });  
   $("#stop-auto").click(function() {
     cancelAnimationFrame(frame.stopAuto);
-  });  
+  });
 
+  $("#draw-line").click(function() {
+    frame.drawBlock(new LineBlock());
+  });  
+  $("#test-rotate-left").click(function() {
+    frame.currentBlock.rotateLeft();
+    frame.clear();
+    frame.drawBlock(frame.currentBlock);
+  });
+  $("#test-rotate-right").click(function() {
+    frame.currentBlock.rotateRight();
+    frame.clear();
+    frame.drawBlock(frame.currentBlock);
+  });
 };
 
 $(document).ready(main);
