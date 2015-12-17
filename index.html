@@ -9,18 +9,22 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
 
     <!-- Custom Stylesheets and Scripts -->
+    <link rel="stylesheet" href="css/main.css">
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript" src="js/gameFactory.js"></script>
-    <link rel="stylesheet" href="css/main.css">
 
     <title>My-Tetris</title>
   </head>
 
   <body>
     <div class="tetris-container">
-      <canvas class="tetris-frame"></canvas>
-      <button class="test-buttons" id="test-button">Get Dimensions</button>
-      <button class="test-buttons" id="test-button-2">Draw Square</button>
+      <div class="white-screen"></div>
+      <div class="canvas-container"><div class="white-screen"></div><canvas class="tetris-frame"></canvas></div>
+      <button class="test-buttons" id="get-size">Get Dimensions</button>
+      <button class="test-buttons" id="draw">Draw Square</button>
+      <button class="test-buttons" id="clear">Clear</button>
+      <button class="test-buttons" id="auto-draw">Auto-Draw</button>
+      <button class="test-buttons" id="stop-auto">Stop-Auto</button>
     </div>
 
   </body>
