@@ -10,10 +10,7 @@ function Block() {
   this.height = 0;
   this.width = 0;
   this.MATRIX_SIZE = 4;
-  this.matrix = [ [0,0,0,0],
-                  [0,0,0,0],
-                  [0,0,0,0],
-                  [0,0,0,0] ];
+  this.matrix = create2DArray(this.MATRIX_SIZE, this.MATRIX_SIZE);
 };
 
 // Method moveUp may be unecessary
@@ -109,7 +106,7 @@ Block.prototype.rRightRecurse = function(size) {
 function LineBlock() {
   Block.call(this);
 
-  this.x = 1;
+  this.y = -3;
   this.color = 1;
 
   this.height = 4;
@@ -118,7 +115,7 @@ function LineBlock() {
   this.matrix[1][1] = this.color;
   this.matrix[2][1] = this.color;
   this.matrix[3][1] = this.color;
-}
+};
 
 LineBlock.prototype = new Block();
 LineBlock.prototype.constructor = LineBlock;
@@ -131,7 +128,7 @@ LineBlock.prototype.constructor = LineBlock;
 function SquareBlock() {
   Block.call(this);
 
-  this.x = 1;
+  this.y = -1;
   this.color = 1;
 
   this.height = 2;
@@ -140,10 +137,29 @@ function SquareBlock() {
   this.matrix[0][2] = this.color;
   this.matrix[1][1] = this.color;
   this.matrix[1][2] = this.color;
-}
+};
 
 SquareBlock.prototype = new Block();
 SquareBlock.prototype.constructor = SquareBlock;
 
 SquareBlock.prototype.rotateRight = function() { /* Do Nothing! No rotations for SquareBlock */ };
 SquareBlock.prototype.rotateLeft = function() { /* Do Nothing! No rotations for SquareBlock */ };
+
+function getNewBlock(blockID) {
+  blockID = blockID || Math.floor(Math.random()*2);
+  
+  var newblock = null;
+  switch(blockID) {
+    case 0:
+      newblock = new LineBlock();
+      break;
+    
+    case 1:
+      newblock = new SquareBlock();
+      break;
+    
+    default:
+      return null;  
+  };
+  return newblock;
+};
