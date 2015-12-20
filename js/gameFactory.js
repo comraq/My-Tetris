@@ -131,29 +131,27 @@ Frame.prototype.generateBlock = function(block) {
   this.deltaY = 0;
   this.setColours();
   this.drawLoop();
-  //console.log(this.currentBlock.distance);
+  //for (var row in this.gameMatrix) console.log(this.gameMatrix[row]);
 };
 
 Frame.prototype.drawLoop = function() {
-  var frame = this;
-  
-  this.clearCurrent();
-  if (this.deltaY > 1) {
-    this.currentBlock.downLocked = this.checkDownLocked(this.x, this.y++); 
-    this.deltaX = 0;
-    this.deltaY = 0;
-  };
-  
-  this.drawBlock();
   if (this.currentBlock.downLocked) {
     if (!this.gameOver) {
-      //console.log("downlocked? " + this.currentBlock.downLocked);
       this.generateBlock();
     } else {
-      alert("Game Over! Your current score is: (to be implemented)");
+      alert("Game Over! Your current score is: (to be implemented), y: " + this.y);
     };
-  } else {   
-    this.stopAuto = requestAnimFrame(function() {frame.drawLoop()});
+  } else {  
+    var frame = this;
+  
+    this.clearCurrent();
+    if (this.deltaY > 1) {
+      this.currentBlock.downLocked = this.checkDownLocked(this.x, this.y++); 
+      this.deltaX = 0;
+      this.deltaY = 0;
+    };
+    this.drawBlock();
+    this.stopAuto = requestAnimFrame(function() {frame.drawLoop()}); //this.stopAuto = setTimeout(function() {frame.drawLoop()}, 1000/60);
     this.deltaY += this.gameSpeed;
   };
   //console.log("block: " + this.currentBlock.colour + " this.y: " + this.y + " downLocked: " + this.currentBlock.downLocked + " GameOver: " + this.gameOver);
@@ -179,14 +177,23 @@ Frame.prototype.newGame = function() {
   this.generateBlock();
 };
 
-/*Frame.prototype.instantDrop = function() {
+Frame.prototype.gameLost = function() {
+
+  
+};
+Frame.prototype.instantDrop = function() {
+  cancelAnimationFrame(this.stopAuto);
   for (var i = 0; i + this.y < this.ROWS; ++i) {
     if (this.checkDownLocked(this.x, this.y + i)) {
       this.deltaX = 0;
       this.deltaY = 0;
-      this.y += i - 1;
+      this.y += i + 1;
 
-      this.drawLoop();
-    }
+      this.currentBlock.downLocked = true;
+      this.clearCurrent();
+      this.drawBlock();
+      break;
+    };
   };
-};*/
+  this.drawLoop();
+};

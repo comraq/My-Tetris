@@ -9,7 +9,7 @@ var main = function() {
     frame.draw(frame.blockWidth);
   });
   $("#clear").click(function() {
-    cancelAnimationFrame(frame.stopAuto);
+    cancelAnimationFrame(frame.stopAuto);    //clearTimeout(frame.stopAuto);
     frame.clearAll();
   });
   $("#new-game").click(function() {
@@ -21,9 +21,9 @@ var main = function() {
   $("#test-rotate-right").click(function() {
     frame.currentBlock.rotateRight();
   });
-  /*$("#test-instant-drop").click(function() {
+  $("#test-instant-drop").click(function() {
     frame.instantDrop();
-  });*/
+  });
 };
 
 $(document).ready(main);

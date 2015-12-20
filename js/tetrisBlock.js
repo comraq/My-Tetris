@@ -111,7 +111,7 @@ Block.prototype.updateDistance = function() {
 function LineBlock() {
   Block.call(this);
 
-  this.y = -3;
+  this.y = -4;
   this.colour = 1;
 
   this.matrix[0][1] = this.colour;
@@ -132,7 +132,7 @@ LineBlock.prototype.constructor = LineBlock;
 function SquareBlock() {
   Block.call(this);
 
-  this.y = -1;
+  this.y = -2;
   this.colour = 2;
 
   this.matrix[0][1] = this.colour;
@@ -156,7 +156,7 @@ SquareBlock.prototype.rotateLeft = function() { /* Do Nothing! No rotations for 
 function LeftHookBlock() {
   Block.call(this);
 
-  this.y = -2;
+  this.y = -3;
   this.colour = 3;
 
   this.matrix[0][2] = this.colour;
@@ -177,7 +177,7 @@ LeftHookBlock.prototype.constructor = LeftHookBlock;
 function RightHookBlock() {
   Block.call(this);
 
-  this.y = -2;
+  this.y = -3;
   this.colour = 4;
 
   this.matrix[0][1] = this.colour;
@@ -198,7 +198,7 @@ RightHookBlock.prototype.constructor = RightHookBlock;
 function ArrowBlock() {
   Block.call(this);
 
-  this.y = -2;
+  this.y = -3;
   this.colour = 5;
 
   this.matrix[0][1] = this.colour;
@@ -219,7 +219,7 @@ ArrowBlock.prototype.constructor = ArrowBlock;
 function LeftBoltBlock() {
   Block.call(this);
 
-  this.y = -2;
+  this.y = -3;
   this.colour = 6;
 
   this.matrix[0][1] = this.colour;
@@ -240,7 +240,7 @@ LeftBoltBlock.prototype.constructor = LeftBoltBlock;
 function RightBoltBlock() {
   Block.call(this);
 
-  this.y = -2;
+  this.y = -3;
   this.colour = 7;
 
   this.matrix[0][2] = this.colour;
