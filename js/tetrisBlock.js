@@ -2,35 +2,16 @@
  * Base class for all tetris blocks
  */
 function Block() {
-  this.x = 0;
   this.y = 0;
   this.leftLocked = false;
   this.rightLocked = false;
   this.downLocked = false;
   this.colour = 0;
-  //this.rotateValid = false;
  
   this.MATRIX_SIZE = 4;
   this.matrix = create2DArray(this.MATRIX_SIZE, this.MATRIX_SIZE);
   this.distance = setAll([], this.MATRIX_SIZE, 0);
 };
-
-/*// Method moveUp may be unecessary
-Block.prototype.moveUp = function() {
-  if (!this.locked) --this.y;  
-};
-
-Block.prototype.moveDown = function() {
-  if (!this.locked) ++this.y;
-};
-
-Block.prototype.moveLeft = function() {
-  if (!this.locked) --this.x;  
-};
-
-Block.prototype.moveRight = function() {
-  if (!this.locked) ++this.x;
-};*/
 
 Block.prototype.rotateLeft = function() {
   if (!this.downLocked) {

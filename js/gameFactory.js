@@ -151,7 +151,7 @@ Frame.prototype.drawLoop = function() {
       this.deltaY = 0;
     };
     this.drawBlock();
-    this.stopAuto = requestAnimFrame(function() {frame.drawLoop()}); //this.stopAuto = setTimeout(function() {frame.drawLoop()}, 1000/60);
+    this.stopAuto = requestAnimationFrame(function() {frame.drawLoop()});
     this.deltaY += this.gameSpeed;
   };
   //console.log("block: " + this.currentBlock.colour + " this.y: " + this.y + " downLocked: " + this.currentBlock.downLocked + " GameOver: " + this.gameOver);
@@ -177,10 +177,16 @@ Frame.prototype.newGame = function() {
   this.generateBlock();
 };
 
-Frame.prototype.gameLost = function() {
-
-  
+Frame.prototype.rotateLeft = function() {
+  //Need to check for leftLocked before rotateLeft
+  this.currentBlock.rotateLeft();
 };
+
+Frame.prototype.rotateRight = function() {
+  //Need to check for rightLocked before rotateRight
+  this.currentBlock.rotateRight();
+};
+
 Frame.prototype.instantDrop = function() {
   cancelAnimationFrame(this.stopAuto);
   for (var i = 0; i + this.y < this.ROWS; ++i) {
