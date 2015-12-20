@@ -10,10 +10,10 @@ var main = function() {
   });
   $("#clear").click(function() {
     cancelAnimationFrame(frame.stopAuto);
-    frame.clear();
+    frame.clearAll();
   });
-  $("#draw-rand").click(function() {
-    frame.generateBlock();
+  $("#new-game").click(function() {
+    frame.newGame();
   });  
   $("#test-rotate-left").click(function() {
     frame.currentBlock.rotateLeft();
@@ -21,6 +21,9 @@ var main = function() {
   $("#test-rotate-right").click(function() {
     frame.currentBlock.rotateRight();
   });
+  /*$("#test-instant-drop").click(function() {
+    frame.instantDrop();
+  });*/
 };
 
 $(document).ready(main);
