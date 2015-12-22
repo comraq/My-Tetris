@@ -66,13 +66,139 @@ Frame.prototype.getSize = function() {
         "\nBlockHeight: " + this.blockHeight + " BlockWidth: " + this.blockWidth);
 };
 
+Frame.prototype.newGame = function() {
+  this.gameMatrix = create2DArray(this.ROWS, this.COLS);
+  this.gameOver = false;
+  this.clearAll();
+  this.generateBlock();
+};
+
+Frame.prototype.generateBlock = function(block) {
+  if (typeof block === "undefined") {
+    this.currentBlock = getNewBlock();
+  } else {
+    this.currentBlock = block;
+  }
+  this.x = (this.COLS - this.currentBlock.MATRIX_SIZE) / 2;
+  this.y = this.currentBlock.y;
+  this.setColours();
+  this.drawLoop();
+  //for (var row in this.gameMatrix) console.log(this.gameMatrix[row]);
+};
+
 Frame.prototype.setColours = function() {
   this.context.fillStyle = this.coloursList[this.currentBlock.colour];
 };
 
-/* Draws a square at coordinates x, y */
-Frame.prototype.drawSquare = function(x, y) {
-  this.context.fillRect(x, y, this.blockWidth - 1, this.blockHeight - 1);
+/* Methods for controlling the current active tetris block */
+
+Frame.prototype.moveLeft = function() {
+  cancelAnimationFrame(this.stopAuto);
+  if (this.checkLeftLocked(this.x - 1, this.y)) {
+    this.currentBlock.leftLocked = true;
+  } else {
+    //--this.x; or smooth animation with -0.5deltaX?
+  };
+  this.draw();
+};
+
+Frame.prototype.moveRight = function() {
+  cancelAnimationFrame(this.stopAuto);
+  if (this.checkRightLocked(this.x + 1, this.y)) {
+    this.currentBlock.rightLocked = true;
+  } else {
+    // ++this.x; or smooth animation with 0.5deltaX?
+  };
+  this.draw();
+};
+
+Frame.prototype.moveDown = function() {
+  cancelAnimationFrame(this.stopAuto);
+  if (this.checkRightLocked(this.x, this.y + 1)) {
+    this.currentBlock.downLocked = true;
+  } else {
+    // ++this.y; or smooth animation with 0.5deltaY?
+  };
+  this.draw();
+};
+
+Frame.prototype.instantDrop = function() {
+  cancelAnimationFrame(this.stopAuto);
+  for (var i = 0; i + this.y < this.ROWS; ++i) {
+    if (this.checkDownLocked(this.x, this.y + i)) {
+      this.y += i + 1;
+      this.currentBlock.downLocked = true;
+      break;
+    };
+  };
+ this.draw();
+};
+
+Frame.prototype.rotateLeft = function() {
+  //Need to check for leftLocked before rotateLeft
+  this.currentBlock.rotateLeft();
+};
+
+Frame.prototype.rotateRight = function() {
+  //Need to check for rightLocked before rotateRight
+  this.currentBlock.rotateRight();
+};
+
+
+/* Methods for checking the vacancy of squares adjacent to the current block */
+
+Frame.prototype.checkLeftLocked = function(checkX, checkY) {
+
+};
+
+Frame.prototype.checkRightLocked = function(checkX, checkY) {
+
+};
+
+Frame.prototype.checkDownLocked = function(checkX, checkY) {
+  for (var i = 0; i < this.currentBlock.distance.length; ++i) {
+    if (this.currentBlock.distance[i] != 0 && (
+          (checkY + 1 + this.currentBlock.distance[i]) >= this.ROWS ||
+          this.gameMatrix[checkY + this.currentBlock.distance[i] + 1][checkX + i] != 0
+        )) {
+      //console.log("y: " + checkY + " coord: " + (checkY + this.currentBlock.distance[i] + 1) + "," + (checkX + i));
+      return true;
+    };
+  };
+  return false;
+};
+
+/* Methods for drawing and clearing the canvas */
+
+/* Call this method to enter drawLoop, ensuring proper initialization of fields */
+Frame.prototype.draw = function() {
+  this.deltaX = 0;
+  this.deltaY = 0;
+  this.drawLoop();
+}
+
+/* The method that is looped for the necessary animation */
+Frame.prototype.drawLoop = function() {
+  var frame = this;
+
+  this.clearCurrent();
+  if (this.deltaY > 1) {
+    this.currentBlock.downLocked = this.checkDownLocked(this.x, this.y++);
+    this.deltaX = 0;
+    this.deltaY = 0;
+  };
+  this.drawBlock();
+  if (this.currentBlock.downLocked) {
+    if (!this.gameOver) {
+      this.generateBlock();
+    } else {
+      alert("Game Over! Your current score is: (to be implemented), y: " + this.y);
+    };
+  } else {
+    this.stopAuto = requestAnimationFrame(function() {frame.drawLoop()});
+    this.deltaY += this.gameSpeed;
+  };
+  //console.log("block: " + this.currentBlock.colour + " this.y: " + this.y + " downLocked: " + this.currentBlock.downLocked + " GameOver: " + this.gameOver);
 };
 
 Frame.prototype.drawBlock = function() {
@@ -100,6 +226,11 @@ Frame.prototype.drawBlock = function() {
   //console.log("currY * blockHeight: " + ((this.y + this.deltaY) * this.blockHeight) + " currY: " + (this.y + this.deltaY) + " y-coord: " + this.y);
 };
 
+/* Draws a square at coordinates x, y */
+Frame.prototype.drawSquare = function(x, y) {
+  this.context.fillRect(x, y, this.blockWidth - 1, this.blockHeight - 1);
+};
+
 /* Clears all drawn elements from the canvas */
 Frame.prototype.clearAll = function() {
   //Check whether the browser window has been resized
@@ -117,89 +248,4 @@ Frame.prototype.clearCurrent = function() {
       this.context.clearRect(this.prevX.pop() * this.blockWidth - 1, this.prevY.pop() * this.blockHeight - 1, this.blockWidth + 1 , this.blockHeight + 1);
     };
   };
-};
-
-Frame.prototype.generateBlock = function(block) {
-  if (typeof block === "undefined") {
-    this.currentBlock = getNewBlock();
-  } else {
-    this.currentBlock = block;
-  }
-  this.x = (this.COLS - this.currentBlock.MATRIX_SIZE) / 2;
-  this.y = this.currentBlock.y;
-  this.deltaX = 0;  
-  this.deltaY = 0;
-  this.setColours();
-  this.drawLoop();
-  //for (var row in this.gameMatrix) console.log(this.gameMatrix[row]);
-};
-
-Frame.prototype.drawLoop = function() {
-  if (this.currentBlock.downLocked) {
-    if (!this.gameOver) {
-      this.generateBlock();
-    } else {
-      alert("Game Over! Your current score is: (to be implemented), y: " + this.y);
-    };
-  } else {  
-    var frame = this;
-  
-    this.clearCurrent();
-    if (this.deltaY > 1) {
-      this.currentBlock.downLocked = this.checkDownLocked(this.x, this.y++); 
-      this.deltaX = 0;
-      this.deltaY = 0;
-    };
-    this.drawBlock();
-    this.stopAuto = requestAnimationFrame(function() {frame.drawLoop()});
-    this.deltaY += this.gameSpeed;
-  };
-  //console.log("block: " + this.currentBlock.colour + " this.y: " + this.y + " downLocked: " + this.currentBlock.downLocked + " GameOver: " + this.gameOver);
-};
-
-Frame.prototype.checkDownLocked = function(checkX, checkY) {
-  for (var i = 0; i < this.currentBlock.distance.length; ++i) {
-    if (this.currentBlock.distance[i] != 0 && (
-          (checkY + 1 + this.currentBlock.distance[i]) >= this.ROWS ||
-          this.gameMatrix[checkY + this.currentBlock.distance[i] + 1][checkX + i] != 0
-        )) {
-      //console.log("y: " + checkY + " coord: " + (checkY + this.currentBlock.distance[i] + 1) + "," + (checkX + i));
-      return true;
-    };  
-  };
-  return false;
-};
-
-Frame.prototype.newGame = function() {
-  this.gameMatrix = create2DArray(this.ROWS, this.COLS);
-  this.gameOver = false;
-  this.clearAll();
-  this.generateBlock();
-};
-
-Frame.prototype.rotateLeft = function() {
-  //Need to check for leftLocked before rotateLeft
-  this.currentBlock.rotateLeft();
-};
-
-Frame.prototype.rotateRight = function() {
-  //Need to check for rightLocked before rotateRight
-  this.currentBlock.rotateRight();
-};
-
-Frame.prototype.instantDrop = function() {
-  cancelAnimationFrame(this.stopAuto);
-  for (var i = 0; i + this.y < this.ROWS; ++i) {
-    if (this.checkDownLocked(this.x, this.y + i)) {
-      this.deltaX = 0;
-      this.deltaY = 0;
-      this.y += i + 1;
-
-      this.currentBlock.downLocked = true;
-      this.clearCurrent();
-      this.drawBlock();
-      break;
-    };
-  };
-  this.drawLoop();
 };
