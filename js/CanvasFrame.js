@@ -1,4 +1,4 @@
-function Frame() {
+function CanvasFrame() {
   this.ROWS = 20;
   this.COLS = 10;
   this.x = 0;
@@ -36,7 +36,7 @@ function Frame() {
   ];
 };
 
-Frame.prototype.init = function() {
+CanvasFrame.prototype.init = function() {
   this.canvas = document.getElementsByClassName("tetris-frame")[0];
   this.context = this.canvas.getContext("2d");
 
@@ -45,7 +45,7 @@ Frame.prototype.init = function() {
 };
 
 /* We resize canvas to match the current CSS transformed sizes */
-Frame.prototype.updateSizes = function() {
+CanvasFrame.prototype.updateSizes = function() {
   this.canvas.height = this.canvas.offsetHeight;
   this.canvas.width = this.canvas.offsetWidth;
 
@@ -61,19 +61,19 @@ Frame.prototype.updateSizes = function() {
   this.gameSpeed = (parseFloat(this.gameLevel) + 5) * 0.01;
 };
 
-Frame.prototype.getSize = function() {
+CanvasFrame.prototype.getSize = function() {
   alert("Height: " + this.height + " Width: " + this.width +
         "\nBlockHeight: " + this.blockHeight + " BlockWidth: " + this.blockWidth);
 };
 
-Frame.prototype.newGame = function() {
+CanvasFrame.prototype.newGame = function() {
   this.gameMatrix = create2DArray(this.ROWS, this.COLS);
   this.gameOver = false;
   this.clearAll();
   this.generateBlock();
 };
 
-Frame.prototype.generateBlock = function(block) {
+CanvasFrame.prototype.generateBlock = function(block) {
   if (typeof block === "undefined") {
     this.currentBlock = getNewBlock();
   } else {
@@ -86,13 +86,13 @@ Frame.prototype.generateBlock = function(block) {
   //for (var row in this.gameMatrix) console.log(this.gameMatrix[row]);
 };
 
-Frame.prototype.setColours = function() {
+CanvasFrame.prototype.setColours = function() {
   this.context.fillStyle = this.coloursList[this.currentBlock.colour];
 };
 
 /* Methods for controlling the current active tetris block */
 
-Frame.prototype.moveLeft = function() {
+CanvasFrame.prototype.moveLeft = function() {
   cancelAnimationFrame(this.stopAuto);
   if (this.checkLeftLocked(this.x - 1, this.y)) {
     this.currentBlock.leftLocked = true;
@@ -102,7 +102,7 @@ Frame.prototype.moveLeft = function() {
   this.draw();
 };
 
-Frame.prototype.moveRight = function() {
+CanvasFrame.prototype.moveRight = function() {
   cancelAnimationFrame(this.stopAuto);
   if (this.checkRightLocked(this.x + 1, this.y)) {
     this.currentBlock.rightLocked = true;
@@ -112,7 +112,7 @@ Frame.prototype.moveRight = function() {
   this.draw();
 };
 
-Frame.prototype.moveDown = function() {
+CanvasFrame.prototype.moveDown = function() {
   cancelAnimationFrame(this.stopAuto);
   if (this.checkRightLocked(this.x, this.y + 1)) {
     this.currentBlock.downLocked = true;
@@ -122,7 +122,7 @@ Frame.prototype.moveDown = function() {
   this.draw();
 };
 
-Frame.prototype.instantDrop = function() {
+CanvasFrame.prototype.instantDrop = function() {
   cancelAnimationFrame(this.stopAuto);
   for (var i = 0; i + this.y < this.ROWS; ++i) {
     if (this.checkDownLocked(this.x, this.y + i)) {
@@ -134,12 +134,12 @@ Frame.prototype.instantDrop = function() {
  this.draw();
 };
 
-Frame.prototype.rotateLeft = function() {
+CanvasFrame.prototype.rotateLeft = function() {
   //Need to check for leftLocked before rotateLeft
   this.currentBlock.rotateLeft();
 };
 
-Frame.prototype.rotateRight = function() {
+CanvasFrame.prototype.rotateRight = function() {
   //Need to check for rightLocked before rotateRight
   this.currentBlock.rotateRight();
 };
@@ -147,15 +147,15 @@ Frame.prototype.rotateRight = function() {
 
 /* Methods for checking the vacancy of squares adjacent to the current block */
 
-Frame.prototype.checkLeftLocked = function(checkX, checkY) {
+CanvasFrame.prototype.checkLeftLocked = function(checkX, checkY) {
 
 };
 
-Frame.prototype.checkRightLocked = function(checkX, checkY) {
+CanvasFrame.prototype.checkRightLocked = function(checkX, checkY) {
 
 };
 
-Frame.prototype.checkDownLocked = function(checkX, checkY) {
+CanvasFrame.prototype.checkDownLocked = function(checkX, checkY) {
   for (var i = 0; i < this.currentBlock.distance.length; ++i) {
     if (this.currentBlock.distance[i] != 0 && (
           (checkY + 1 + this.currentBlock.distance[i]) >= this.ROWS ||
@@ -171,14 +171,14 @@ Frame.prototype.checkDownLocked = function(checkX, checkY) {
 /* Methods for drawing and clearing the canvas */
 
 /* Call this method to enter drawLoop, ensuring proper initialization of fields */
-Frame.prototype.draw = function() {
+CanvasFrame.prototype.draw = function() {
   this.deltaX = 0;
   this.deltaY = 0;
   this.drawLoop();
 }
 
 /* The method that is looped for the necessary animation */
-Frame.prototype.drawLoop = function() {
+CanvasFrame.prototype.drawLoop = function() {
   var frame = this;
 
   this.clearCurrent();
@@ -192,7 +192,7 @@ Frame.prototype.drawLoop = function() {
     if (!this.gameOver) {
       this.generateBlock();
     } else {
-      alert("Game Over! Your current score is: (to be implemented), y: " + this.y);
+      alert("Game Over! Your current score is: (to be implemented)");
     };
   } else {
     this.stopAuto = requestAnimationFrame(function() {frame.drawLoop()});
@@ -201,7 +201,7 @@ Frame.prototype.drawLoop = function() {
   //console.log("block: " + this.currentBlock.colour + " this.y: " + this.y + " downLocked: " + this.currentBlock.downLocked + " GameOver: " + this.gameOver);
 };
 
-Frame.prototype.drawBlock = function() {
+CanvasFrame.prototype.drawBlock = function() {
   for (var r = this.currentBlock.MATRIX_SIZE - 1; r >= 0; --r) {
     for (var c = 0; c < this.currentBlock.MATRIX_SIZE; ++c) {
       if (this.currentBlock.matrix[r][c] != 0) {
@@ -227,12 +227,12 @@ Frame.prototype.drawBlock = function() {
 };
 
 /* Draws a square at coordinates x, y */
-Frame.prototype.drawSquare = function(x, y) {
+CanvasFrame.prototype.drawSquare = function(x, y) {
   this.context.fillRect(x, y, this.blockWidth - 1, this.blockHeight - 1);
 };
 
 /* Clears all drawn elements from the canvas */
-Frame.prototype.clearAll = function() {
+CanvasFrame.prototype.clearAll = function() {
   //Check whether the browser window has been resized
   if (this.canvas.offsetWidth != this.width || this.canvas.offsetHeight != this.height) {
     this.updateSizes();
@@ -242,7 +242,7 @@ Frame.prototype.clearAll = function() {
 };
 
 /* Only clear the current active block from the canvas */
-Frame.prototype.clearCurrent = function() {
+CanvasFrame.prototype.clearCurrent = function() {
   if (typeof this.currentBlock !== "undefined") {
     while (this.prevX.length != 0) {
       this.context.clearRect(this.prevX.pop() * this.blockWidth - 1, this.prevY.pop() * this.blockHeight - 1, this.blockWidth + 1 , this.blockHeight + 1);

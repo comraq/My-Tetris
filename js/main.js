@@ -1,5 +1,5 @@
-var main = function() {
-  var frame = new Frame();
+var Main = function() {
+  var frame = new CanvasFrame();
   frame.init();
 
   $("#get-size").click(function() {
@@ -55,4 +55,4 @@ function parseInput(key, frame) {
   };
 };
 
-$(document).ready(main);
+$(document).ready(Main);
