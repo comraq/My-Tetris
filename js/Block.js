@@ -10,14 +10,14 @@ function Block() {
  
   this.MATRIX_SIZE = 4;
   this.matrix = create2DArray(this.MATRIX_SIZE, this.MATRIX_SIZE);
-  this.distance = setAll([], this.MATRIX_SIZE, 0);
+  this.lDistance = setAll([], this.MATRIX_SIZE, 0);
+  this.rDistance = setAll([], this.MATRIX_SIZE, 0);
+  this.dDistance = setAll([], this.MATRIX_SIZE, 0);
 };
 
 Block.prototype.rotateLeft = function() {
-  if (!this.downLocked) {
-    this.rLeftRecurse(this.MATRIX_SIZE);
-    this.updateDistance();
-  };
+  this.rLeftRecurse(this.MATRIX_SIZE);
+  this.updateDistance();
 };
 
 Block.prototype.rLeftRecurse = function(size) {
@@ -45,10 +45,8 @@ Block.prototype.rLeftRecurse = function(size) {
 };
 
 Block.prototype.rotateRight = function() {
-  if (!this.downLocked) {
-    this.rRightRecurse(this.MATRIX_SIZE);
-    this.updateDistance();
-  };
+  this.rRightRecurse(this.MATRIX_SIZE);
+  this.updateDistance();
 };
 
 Block.prototype.rRightRecurse = function(size) {
@@ -76,10 +74,24 @@ Block.prototype.rRightRecurse = function(size) {
 };
 
 Block.prototype.updateDistance = function() {
-  setAll(this.distance, this.distance.length, 0);
+  setAll(this.dDistance, this.dDistance.length, 0);
   for (var r = this.MATRIX_SIZE - 1; r >= 0; --r) {
     for (var c = 0; c < this.MATRIX_SIZE; ++c) {
-      if (this.distance[c] == 0 && this.matrix[r][c] != 0) this.distance[c] = r + 1;
+      if (this.dDistance[c] == 0 && this.matrix[r][c] != 0) this.dDistance[c] = r + 1;
+    };
+  };
+
+  setAll(this.rDistance, this.rDistance.length, 0);
+  for (var c = this.MATRIX_SIZE - 1; c >= 0; --c) {
+    for (var r = 0; r < this.MATRIX_SIZE; ++r) {
+      if (this.rDistance[r] == 0 && this.matrix[r][c] != 0) this.rDistance[r] = c + 1;
+    };
+  };
+
+  setAll(this.lDistance, this.lDistance.length, 0);
+  for (var c = 0; c < this.MATRIX_SIZE; ++c) {
+    for (var r = 0; r < this.MATRIX_SIZE; ++r) {
+      if (this.lDistance[r] == 0 && this.matrix[r][c] != 0) this.lDistance[r] = this.MATRIX_SIZE - c;
     };
   };
 };

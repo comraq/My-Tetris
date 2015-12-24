@@ -1,5 +1,4 @@
 function CanvasFrame() {
-  this.deltaX = 0;
   this.deltaY = 0;
   this.prevX = [];
   this.prevY = [];
@@ -51,7 +50,7 @@ CanvasFrame.prototype.updateSizes = function() {
   if (typeof this.game.currentBlock !== "undefined") this.setColours();
 
   //Update the rate of which blocks fall
-  this.gameSpeed = (parseFloat(this.game.level) + 5) * 0.01;
+  this.gameSpeed = (parseFloat(this.game.level) + 3) * 0.01;
 };
 
 CanvasFrame.prototype.getSize = function() {
@@ -79,23 +78,15 @@ CanvasFrame.prototype.setColours = function() {
 /* Methods for controlling the current active tetris block */
 
 CanvasFrame.prototype.moveLeft = function() {
-  cancelAnimationFrame(this.stopAuto);
   this.game.moveLeft();
-  this.draw();
 };
 
 CanvasFrame.prototype.moveRight = function() {
-  cancelAnimationFrame(this.stopAuto);
   this.game.moveRight();
-  this.draw();
 };
 
 CanvasFrame.prototype.moveDown = function() {
-  cancelAnimationFrame(this.stopAuto);
-  console.log("before y: " + this.game.y);
   this.game.moveDown();
-  console.log("after y: " + this.game.y);
-  this.draw();
 };
 
 CanvasFrame.prototype.instantDrop = function() {
@@ -105,20 +96,17 @@ CanvasFrame.prototype.instantDrop = function() {
 };
 
 CanvasFrame.prototype.rotateLeft = function() {
-  //Need to check for leftLocked before rotateLeft
-  this.game.currentBlock.rotateLeft();
+  this.game.rotateLeft();
 };
 
 CanvasFrame.prototype.rotateRight = function() {
-  //Need to check for rightLocked before rotateRight
-  this.game.currentBlock.rotateRight();
+  this.game.rotateRight();
 };
 
 /* Methods for drawing and clearing the canvas */
 
 /* Call this method to enter drawLoop, ensuring proper initialization of fields */
 CanvasFrame.prototype.draw = function() {
-  this.deltaX = 0;
   this.deltaY = 0;
   this.drawLoop();
 }
@@ -130,7 +118,8 @@ CanvasFrame.prototype.drawLoop = function() {
   this.clearCurrent();
   if (this.deltaY > 1) {
     this.game.moveDown();
-    this.deltaX = 0;
+    this.game.currentBlock.leftLocked = this.game.checkLeftLocked(this.game.x, this.game.y);
+    this.game.currentBlock.rightLocked = this.game.checkRightLocked(this.game.x, this.game.y);
     this.deltaY = 0;
   };
   this.drawBlock();
@@ -151,7 +140,7 @@ CanvasFrame.prototype.drawBlock = function() {
   for (var r = this.game.currentBlock.MATRIX_SIZE - 1; r >= 0; --r) {
     for (var c = 0; c < this.game.currentBlock.MATRIX_SIZE; ++c) {
       if (this.game.currentBlock.matrix[r][c] != 0) {
-        this.drawSquare((this.game.x + this.deltaX + c) * this.blockWidth, (this.game.y + this.deltaY + r) * this.blockHeight);
+        this.drawSquare((this.game.x + c) * this.blockWidth, (this.game.y + r) * this.blockHeight);
         //console.log("block: " + this.game.currentBlock.colour + " y: " + this.game.y + " dy: " + this.deltaY + " coord: " + r + "," + c + " downLocked: " + this.game.currentBlock.downLocked);
 
         //Marking gameMatrix with the colour of the currently dropped block 
@@ -163,8 +152,8 @@ CanvasFrame.prototype.drawBlock = function() {
             this.game.addToMatrix(r, c);
           };
         } else {
-          this.prevX.push(this.game.x + this.deltaX + c);
-          this.prevY.push(this.game.y + this.deltaY + r);
+          this.prevX.push(this.game.x + c);
+          this.prevY.push(this.game.y + r);
         };
       };  
     };

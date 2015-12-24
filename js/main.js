@@ -24,9 +24,6 @@ var Main = function() {
   $("#test-instant-drop").click(function() {
     frame.instantDrop();
   });
-  $("#test-down").click(function() {
-    frame.moveDown();
-  });
 
   $("body").bind("keydown", function(event) {
     parseInput(event.keyCode, frame);
@@ -37,21 +34,26 @@ function parseInput(key, frame) {
   switch(key) {
     case 37:
       //Left Arrow
+      frame.moveLeft();
       break;
-    case 38: //Up Arrow
+    case 38:
+      //Up Arrow
       frame.instantDrop();
       break;
     case 39:
       //Right Arrow
+      frame.moveRight();
       break;
     case 40:
       //Down Arrow
       frame.moveDown();
       break;
-    case 188: // ','
+    case 188:
+      // ','
       frame.rotateLeft();
       break;
-    case 190: // '.'
+    case 190:
+      // '.'
       frame.rotateRight();
       break;
     default:
