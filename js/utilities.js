@@ -23,6 +23,10 @@ function isEmpty(obj) {
   return true;
 };
 
+function getMaxOfArray(numArray) {
+  return Math.max.apply(null, numArray);
+};
+
 /* requestAnimationFrame Polyfill */
 (function() {
   var lastTime = 0;

@@ -29,7 +29,6 @@ Game.prototype.generateBlock = function(block) {
   this.y = this.currentBlock.y;
   this.clearedRows = {};
   //for (var row in this.matrix) console.log(this.matrix[row]);
-  //console.log(this.currentBlock.rDistance);
 };
 
 Game.prototype.addToMatrix = function(row, col) {
@@ -74,12 +73,34 @@ Game.prototype.instantDrop = function() {
 
 Game.prototype.rotateLeft = function() {
   this.currentBlock.rotateLeft();
-  if (!this.checkValid()) this.currentBlock.rotateRight();
+  if (!this.checkValid()) {
+    //Checking for available "Wall Kicks"
+    if (this.x < 0 && this.checkValid(getMaxOfArray(this.currentBlock.lDistance) - this.currentBlock.MATRIX_SIZE, this.y)) {
+      this.x = getMaxOfArray(this.currentBlock.lDistance) - this.currentBlock.MATRIX_SIZE;
+      return;
+    };
+    if ((this.x + this.currentBlock.MATRIX_SIZE) >= this.COLS && this.checkValid(this.COLS - getMaxOfArray(this.currentBlock.rDistance), this.y)) {
+      this.x = this.COLS - getMaxOfArray(this.currentBlock.rDistance);
+      return;
+    };
+    this.currentBlock.rotateRight();
+  };
 };
 
 Game.prototype.rotateRight = function() {
   this.currentBlock.rotateRight();
-  if (!this.checkValid()) this.currentBlock.rotateLeft();
+  if (!this.checkValid()) {
+    //Checking for available "Wall Kicks"
+    if (this.x < 0 && this.checkValid(getMaxOfArray(this.currentBlock.lDistance) - this.currentBlock.MATRIX_SIZE, this.y)) {
+      this.x = getMaxOfArray(this.currentBlock.lDistance) - this.currentBlock.MATRIX_SIZE;
+      return;
+    };
+    if ((this.x + this.currentBlock.MATRIX_SIZE) >= this.COLS && this.checkValid(this.COLS - getMaxOfArray(this.currentBlock.rDistance), this.y)) {
+      this.x = this.COLS - getMaxOfArray(this.currentBlock.rDistance);
+      return;
+    };
+    this.currentBlock.rotateLeft();
+  };
 };
 
 
@@ -152,10 +173,8 @@ Game.prototype.clearFilledRows = function() {
   };
 
   if (isEmpty(this.clearedRows)) {
-    //console.log("Last Block x: " + this.x + " y: " + this.y + " clearedRows: " + this.clearedRows + " rowFilled: " + false);
     return false;
   } else {
-    //console.log("Last Block x: " + this.x + " y: " + this.y + " clearedRows: " + this.clearedRows + " rowFilled: " + true);
     return true;
   };
 };
@@ -164,5 +183,6 @@ Game.prototype.dropFilledRows = function() {
   for (var rowIndex in this.clearedRows) {
     this.matrix.splice(rowIndex, 1);
     this.matrix.unshift(this.emptyRow);
-  };  
+  };
+  //Also dropping isolated blocks due to gravity
 };
