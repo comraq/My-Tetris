@@ -16,13 +16,16 @@ var Main = function() {
     frame.newGame();
   });  
   $("#test-rotate-left").click(function() {
-    frame.currentBlock.rotateLeft();
+    frame.rotateLeft();
   });
   $("#test-rotate-right").click(function() {
-    frame.currentBlock.rotateRight();
+    frame.rotateRight();
   });
   $("#test-instant-drop").click(function() {
     frame.instantDrop();
+  });
+  $("#test-down").click(function() {
+    frame.moveDown();
   });
 
   $("body").bind("keydown", function(event) {
@@ -43,6 +46,7 @@ function parseInput(key, frame) {
       break;
     case 40:
       //Down Arrow
+      frame.moveDown();
       break;
     case 188: // ','
       frame.rotateLeft();

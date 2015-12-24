@@ -3,18 +3,12 @@ function Game() {
   this.COLS = 10;
   this.x = 0;
   this.y = 0;
-  this.deltaX = 0;
-  this.deltaY = 0;
-
-  this.prevX = [];
-  this.prevY = [];
 
   this.matrix;
   this.level = 10;
   this.currentBlock;
 
   this.gameOver;
-
 };
 
 Game.prototype.init = function() {
@@ -31,10 +25,12 @@ Game.prototype.generateBlock = function(block) {
   }
   this.x = (this.COLS - this.currentBlock.MATRIX_SIZE) / 2;
   this.y = this.currentBlock.y;
-  this.setColours();
-  this.drawLoop();
   //for (var row in this.matrix) console.log(this.matrix[row]);
 };
+
+Game.prototype.addToMatrix = function(row, col) {
+  this.matrix[this.y + row][this.x + col] = this.currentBlock.matrix[row][col];
+}
 
 /* Methods for controlling the current active tetris block */
 
@@ -59,13 +55,7 @@ Game.prototype.moveRight = function() {
 };
 
 Game.prototype.moveDown = function() {
-  if (this.checkRightLocked(this.x, this.y + 1)) {
-    this.currentBlock.downLocked = true;
-    return false;
-  } else {
-    // ++this.y; or smooth animation with 0.5deltaY?
-    return true;
-  };
+  if (this.checkDownLocked(this.x, this.y++)) this.currentBlock.downLocked = true;
 };
 
 Game.prototype.instantDrop = function() {
@@ -73,10 +63,9 @@ Game.prototype.instantDrop = function() {
     if (this.checkDownLocked(this.x, this.y + i)) {
       this.y += i + 1;
       this.currentBlock.downLocked = true;
-      return true;
+      return;
     };
   };
-  return false;
 };
 
 Game.prototype.rotateLeft = function() {
@@ -111,31 +100,4 @@ Game.prototype.checkDownLocked = function(checkX, checkY) {
     };
   };
   return false;
-};
-
-/* Methods for drawing and clearing the canvas */
-
-Game.prototype.drawBlock = function() {
-  for (var r = this.currentBlock.MATRIX_SIZE - 1; r >= 0; --r) {
-    for (var c = 0; c < this.currentBlock.MATRIX_SIZE; ++c) {
-      if (this.currentBlock.matrix[r][c] != 0) {
-        this.drawSquare((this.x + this.deltaX + c) * this.blockWidth, (this.y + this.deltaY + r) * this.blockHeight);
-        //console.log("block: " + this.currentBlock.colour + " y: " + this.y + " dy: " + this.deltaY + " coord: " + r + "," + c + " downLocked: " + this.currentBlock.downLocked);
-
-        //Marking matrix with the colour of the currently dropped block 
-        if(this.currentBlock.downLocked) {
-          if (this.y + r <= 0) {
-            this.gameOver = true;
-            return;
-          } else {
-            this.matrix[this.y + r][this.x + c] = this.currentBlock.matrix[r][c];
-          };
-        } else {
-          this.prevX.push(this.x + this.deltaX + c);
-          this.prevY.push(this.y + this.deltaY + r);
-        };
-      };  
-    };
-  };
-  //console.log("currY * blockHeight: " + ((this.y + this.deltaY) * this.blockHeight) + " currY: " + (this.y + this.deltaY) + " y-coord: " + this.y);
 };
