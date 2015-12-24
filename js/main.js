@@ -26,6 +26,7 @@ var Main = function() {
   });
 
   $("body").bind("keydown", function(event) {
+    event.preventDefault();
     parseInput(event.keyCode, frame);
   });
 };

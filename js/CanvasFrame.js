@@ -15,7 +15,7 @@ function CanvasFrame() {
   this.stopAuto = 0;
 
   this.clearCount;
-  this.CLEAR_REPEAT = 6;
+  this.CLEAR_REPEAT = 7;
 
   this.coloursList = [
     "",
@@ -138,15 +138,19 @@ CanvasFrame.prototype.drawLoop = function() {
   };
   if (this.game.currentBlock.downLocked) {
     if (!this.game.gameOver) {
-      if (this.clearCount <= this.CLEAR_REPEAT && (this.clearCount > 0 || this.game.clearFilledRows())) {
+      if (this.clearCount < this.CLEAR_REPEAT && (this.clearCount > 0 || this.game.clearFilledRows())) {
         for (var rowIndex in this.game.clearedRows) {
-          console.log(rowIndex);
+          //console.log(rowIndex);
           if (this.clearCount % 2 == 0) {
             this.game.matrix[rowIndex] = this.game.emptyRow;
           } else {
             this.game.matrix[rowIndex] = this.game.clearedRows[rowIndex];
           };
         };
+        ++this.clearCount;
+        this.stopAuto = requestAnimationFrame(function() {frame.drawLoop()});
+      } else if (this.clearCount == this.CLEAR_REPEAT) {
+        this.game.dropFilledRows();
         ++this.clearCount;
         this.stopAuto = requestAnimationFrame(function() {frame.drawLoop()});
       } else {

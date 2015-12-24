@@ -5,7 +5,7 @@ function Game() {
   this.y = 0;
 
   this.matrix;
-  this.level = 10;
+  this.level = 1;
   this.currentBlock;
 
   this.clearedRows;
@@ -74,12 +74,12 @@ Game.prototype.instantDrop = function() {
 
 Game.prototype.rotateLeft = function() {
   this.currentBlock.rotateLeft();
-  if (!this.rotateValid()) this.currentBlock.rotateRight();
+  if (!this.checkValid()) this.currentBlock.rotateRight();
 };
 
 Game.prototype.rotateRight = function() {
   this.currentBlock.rotateRight();
-  if (!this.rotateValid()) this.currentBlock.rotateLeft();
+  if (!this.checkValid()) this.currentBlock.rotateLeft();
 };
 
 
@@ -121,12 +121,14 @@ Game.prototype.checkDownLocked = function(checkX, checkY) {
   return false;
 };
 
-Game.prototype.rotateValid = function() {
+Game.prototype.checkValid = function(checkX, checkY) {
+  if (typeof checkX === "undefined") checkX = this.x;
+  if (typeof checkY === "undefined") checkY = this.y;
   for (var r = 0; r < this.currentBlock.MATRIX_SIZE; ++r) {
     for (var c = 0; c < this.currentBlock.MATRIX_SIZE; ++c) {
       if (this.currentBlock.matrix[r][c] != 0 &&
-            ((this.y + r) >= this.ROWS || (this.x + c) < 0 || (this.x + c) >= this.COLS ||
-            (this.y + r >= 0 && this.matrix[this.y + r][this.x + c] != 0))) {
+            ((checkY + r) >= this.ROWS || (checkX + c) < 0 || (checkX + c) >= this.COLS ||
+            (checkY + r >= 0 && this.matrix[checkY + r][checkX + c] != 0))) {
         return false;
       };
     };
@@ -150,10 +152,17 @@ Game.prototype.clearFilledRows = function() {
   };
 
   if (isEmpty(this.clearedRows)) {
-    console.log("Last Block x: " + this.x + " y: " + this.y + " clearedRows: " + this.clearedRows + " rowFilled: " + false);
+    //console.log("Last Block x: " + this.x + " y: " + this.y + " clearedRows: " + this.clearedRows + " rowFilled: " + false);
     return false;
   } else {
-    console.log("Last Block x: " + this.x + " y: " + this.y + " clearedRows: " + this.clearedRows + " rowFilled: " + true);
+    //console.log("Last Block x: " + this.x + " y: " + this.y + " clearedRows: " + this.clearedRows + " rowFilled: " + true);
     return true;
   };
+};
+
+Game.prototype.dropFilledRows = function() {
+  for (var rowIndex in this.clearedRows) {
+    this.matrix.splice(rowIndex, 1);
+    this.matrix.unshift(this.emptyRow);
+  };  
 };
