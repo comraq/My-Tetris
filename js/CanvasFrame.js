@@ -14,6 +14,9 @@ function CanvasFrame() {
   this.gameSpeed;
   this.stopAuto = 0;
 
+  this.clearCount;
+  this.CLEAR_REPEAT = 6;
+
   this.coloursList = [
     "",
     "#ff0000", //LineBlock
@@ -67,12 +70,17 @@ CanvasFrame.prototype.newGame = function() {
 
 CanvasFrame.prototype.generateBlock = function(block) {
   this.game.generateBlock(block);
+  this.clearCount = 0;
   this.setColours();
-  this.drawLoop();
+  this.draw();
 };
 
-CanvasFrame.prototype.setColours = function() {
-  this.context.fillStyle = this.coloursList[this.game.currentBlock.colour];
+CanvasFrame.prototype.setColours = function(colour) {
+  if (typeof colour !== "undefined") {
+    this.context.fillStyle = colour;
+  } else {
+    this.context.fillStyle = this.coloursList[this.game.currentBlock.colour];
+  };
 };
 
 /* Methods for controlling the current active tetris block */
@@ -115,17 +123,35 @@ CanvasFrame.prototype.draw = function() {
 CanvasFrame.prototype.drawLoop = function() {
   var frame = this;
 
-  this.clearCurrent();
   if (this.deltaY > 1) {
     this.game.moveDown();
     this.game.currentBlock.leftLocked = this.game.checkLeftLocked(this.game.x, this.game.y);
     this.game.currentBlock.rightLocked = this.game.checkRightLocked(this.game.x, this.game.y);
     this.deltaY = 0;
   };
-  this.drawBlock();
+  if (this.clearCount == 0) {
+    this.clearCurrent();
+    this.drawBlock();
+  } else {
+    this.clearAll();
+    this.drawAll();
+  };
   if (this.game.currentBlock.downLocked) {
     if (!this.game.gameOver) {
-      this.generateBlock();
+      if (this.clearCount <= this.CLEAR_REPEAT && (this.clearCount > 0 || this.game.clearFilledRows())) {
+        for (var rowIndex in this.game.clearedRows) {
+          console.log(rowIndex);
+          if (this.clearCount % 2 == 0) {
+            this.game.matrix[rowIndex] = this.game.emptyRow;
+          } else {
+            this.game.matrix[rowIndex] = this.game.clearedRows[rowIndex];
+          };
+        };
+        ++this.clearCount;
+        this.stopAuto = requestAnimationFrame(function() {frame.drawLoop()});
+      } else {
+        this.generateBlock();
+      };
     } else {
       alert("Game Over! Your current score is: (to be implemented)");
     };
@@ -134,6 +160,17 @@ CanvasFrame.prototype.drawLoop = function() {
     this.deltaY += this.gameSpeed;
   };
   //console.log("block: " + this.game.currentBlock.colour + " this.game.y: " + this.game.y + " downLocked: " + this.game.currentBlock.downLocked + " GameOver: " + this.gameOver);
+};
+
+CanvasFrame.prototype.drawAll = function() {
+  for (var r = 0; r < this.game.ROWS; ++r) {
+    for (var c = 0; c < this.game.COLS; ++c) {
+      if (this.game.matrix[r][c] != 0) {
+        this.setColours(this.coloursList[this.game.matrix[r][c]]);
+        this.drawSquare((c) * this.blockWidth, (r) * this.blockHeight);
+      };
+    };
+  };
 };
 
 CanvasFrame.prototype.drawBlock = function() {

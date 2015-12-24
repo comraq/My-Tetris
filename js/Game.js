@@ -8,11 +8,14 @@ function Game() {
   this.level = 10;
   this.currentBlock;
 
+  this.clearedRows;
+  this.emptyRow;
   this.gameOver;
 };
 
 Game.prototype.init = function() {
   this.matrix = create2DArray(this.ROWS, this.COLS);
+  this.emptyRow = setAll([], this.COLS, 0);
   this.gameOver = false;
 };
 
@@ -24,6 +27,7 @@ Game.prototype.generateBlock = function(block) {
   };
   this.x = (this.COLS - this.currentBlock.MATRIX_SIZE) / 2;
   this.y = this.currentBlock.y;
+  this.clearedRows = {};
   //for (var row in this.matrix) console.log(this.matrix[row]);
   //console.log(this.currentBlock.rDistance);
 };
@@ -128,4 +132,28 @@ Game.prototype.rotateValid = function() {
     };
   };
   return true;
+};
+
+Game.prototype.clearFilledRows = function() {
+  var rowFilled;
+  for (var i = 0; i < this.currentBlock.lDistance.length; ++i) {
+    if (this.currentBlock.lDistance[i] != 0) {
+      rowFilled = true;
+      for (var c = 0; c < this.COLS; ++c) {
+        if (this.matrix[this.y + i][c] == 0) {
+          rowFilled = false;
+          break;
+        };
+      };
+      if (rowFilled) this.clearedRows[this.y + i] = this.matrix[this.y + i];  
+    };
+  };
+
+  if (isEmpty(this.clearedRows)) {
+    console.log("Last Block x: " + this.x + " y: " + this.y + " clearedRows: " + this.clearedRows + " rowFilled: " + false);
+    return false;
+  } else {
+    console.log("Last Block x: " + this.x + " y: " + this.y + " clearedRows: " + this.clearedRows + " rowFilled: " + true);
+    return true;
+  };
 };

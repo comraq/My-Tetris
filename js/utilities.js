@@ -1,4 +1,4 @@
-var create2DArray = function(rows, cols) {
+function create2DArray(rows, cols) {
   var result = [];
   for (var row = 0; row < rows; ++row) {
     result[row] = [];
@@ -9,11 +9,18 @@ var create2DArray = function(rows, cols) {
   return result;
 };
 
-var setAll = function(array, length, value) {
+function setAll(array, length, value) {
   for (var i = 0; i < length; ++i) {
     array[i] = 0;
   };
   return array;
+};
+
+function isEmpty(obj) {
+  for(var prop in obj) {
+    if(obj.hasOwnProperty(prop)) return false;
+  };
+  return true;
 };
 
 /* requestAnimationFrame Polyfill */
