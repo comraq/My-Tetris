@@ -22,17 +22,45 @@
   <body>
     <div class="tetris-container">
       <div class="white-screen"></div>
+      <div class="button-container">
+        <button id="new-game">New Game</button>
+        <button id="stop">Stop</button>
+      </div>
+      <div class="peripheral-container">
+        <div class="scoreboard"><p class="score-components" id="score-label">Score:</p><p class="score-components" id="score-field">&nbsp</p></div>
+        <div class="level-container">
+          <p class="level-components" id="level-label">Level:</p>
+          <div class="level-components level-button-container">
+            <div class="level-components level-button" id="increase-level">&#9650</div>
+            <div class="level-components level-button" id="decrease-level">&#9660</div>
+          </div>  
+          <p class="level-components" id="level-field">&nbsp</p>
+        </div>
+      </div>
+      <div class="info-container">
+        <h1 class="info-header">Controls<h1>
+        <p class="info-body info-col-1">
+          Up-Arrow:<br>
+          Down-Arrow:<br>
+          Left-Arrow:<br>
+          Right-Arrow:<br>
+          Comma Key:<br>
+          Period Key:<br>
+        </p>
+        <p class="info-body info-col-2">
+          Instant Drop<br>
+          Move Down<br>
+          Move Left<br>
+          Move Right<br>
+          Rotate Left<br>
+          Rotate Right<br>
+        </p>
+      </div>  
       <div class="canvas-container"><div class="white-screen"></div><canvas class="tetris-frame"></canvas></div>
     </div>
 
-    <button class="test-buttons" id="get-size">Get Dimensions</button>
-    <button class="test-buttons" id="draw">Draw Square</button>
-    <button class="test-buttons" id="clear">Clear/Stop</button><br>
 
-    <button class="test-buttons" id="new-game">New Game</button>
-    <button class="test-buttons" id="test-rotate-left">Rotate Left</button>
-    <button class="test-buttons" id="test-rotate-right">Rotate Right</button>
-    <button class="test-buttons" id="test-instant-drop">Instant Drop</button>
+
   </body>
 
 </html>

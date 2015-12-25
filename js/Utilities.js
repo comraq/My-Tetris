@@ -17,10 +17,18 @@ function setAll(array, length, value) {
 };
 
 function isEmpty(obj) {
-  for(var prop in obj) {
-    if(obj.hasOwnProperty(prop)) return false;
+  if (numProperties(obj) == 0) {
+    return true;
   };
-  return true;
+  return false;
+};
+
+function numProperties(obj) {
+  var count = 0;
+  for(var prop in obj) {
+    if(obj.hasOwnProperty(prop)) ++count;
+  };
+  return count;
 };
 
 function getMaxOfArray(numArray) {
