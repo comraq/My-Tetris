@@ -9,8 +9,7 @@ var Main = function() {
     frame.draw(frame.blockWidth);
   });
   $("#clear").click(function() {
-    cancelAnimationFrame(frame.stopAuto);
-    frame.clearAll();
+    frame.stopGame();
   });
   $("#new-game").click(function() {
     frame.newGame();

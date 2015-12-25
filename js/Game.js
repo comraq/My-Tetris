@@ -7,14 +7,21 @@ function Game() {
   this.matrix;
   this.level = 1;
   this.currentBlock;
+  this.dirMatrix;
+  this.DIR_LEFT = 1;
+  this.DIR_RIGHT = 2;
+  this.DIR_BOTH = 3;
+  this.DIR_VERTICAL = 4;
 
   this.clearedRows;
   this.emptyRow;
+  //this.colGaps;
   this.gameOver;
 };
 
 Game.prototype.init = function() {
   this.matrix = create2DArray(this.ROWS, this.COLS);
+  this.dirMatrix = create2DArray(this.ROWS, this.COLS);
   this.emptyRow = setAll([], this.COLS, 0);
   this.gameOver = false;
 };
@@ -28,11 +35,34 @@ Game.prototype.generateBlock = function(block) {
   this.x = (this.COLS - this.currentBlock.MATRIX_SIZE) / 2;
   this.y = this.currentBlock.y;
   this.clearedRows = {};
-  //for (var row in this.matrix) console.log(this.matrix[row]);
 };
 
-Game.prototype.addToMatrix = function(row, col) {
+Game.prototype.addBlockToMatrix = function(row, col) {
   this.matrix[this.y + row][this.x + col] = this.currentBlock.matrix[row][col];
+  /*if (col == this.currentBlock.MATRIX_SIZE - 1) {
+    if (this.currentBlock.matrix[row][col - 1] != 0) {
+      this.dirMatrix[this.y + row][this.x + col] = this.DIR_LEFT;
+    } else {
+      this.dirMatrix[this.y + row][this.x + col] = this.DIR_VERTICAL;
+    };
+    return;
+  } else if (col == 0) {
+    if (this.currentBlock.matrix[row][col + 1] != 0) {
+      this.dirMatrix[this.y + row][this.x + col] = this.DIR_RIGHT;
+    } else {
+      this.dirMatrix[this.y + row][this.x + col] = this.DIR_VERTICAL;
+    };
+    return;
+  };
+  if (this.currentBlock.matrix[row][col - 1] != 0 && this.currentBlock.matrix[row][col + 1] != 0) {
+    this.dirMatrix[this.y + row][this.x + col] = this.DIR_BOTH;
+  } else if (this.currentBlock.matrix[row][col - 1] != 0 && this.currentBlock.matrix[row][col + 1] == 0) {
+    this.dirMatrix[this.y + row][this.x + col] = this.DIR_LEFT;
+  } else if (this.currentBlock.matrix[row][col - 1] == 0 && this.currentBlock.matrix[row][col + 1] != 0) {
+    this.dirMatrix[this.y + row][this.x + col] = this.DIR_RIGHT;
+  } else {
+    this.dirMatrix[this.y + row][this.x + col] = this.DIR_VERTICAL;
+  };*/
 };
 
 /* Methods for controlling the current active tetris block */
@@ -72,32 +102,46 @@ Game.prototype.instantDrop = function() {
 };
 
 Game.prototype.rotateLeft = function() {
+  var leftGap = this.currentBlock.MATRIX_SIZE - getMaxOfArray(this.currentBlock.lDistance);
+  var rightGap = this.currentBlock.MATRIX_SIZE - getMaxOfArray(this.currentBlock.rDistance);
+  
   this.currentBlock.rotateLeft();
   if (!this.checkValid()) {
     //Checking for available "Wall Kicks"
-    if (this.x < 0 && this.checkValid(getMaxOfArray(this.currentBlock.lDistance) - this.currentBlock.MATRIX_SIZE, this.y)) {
-      this.x = getMaxOfArray(this.currentBlock.lDistance) - this.currentBlock.MATRIX_SIZE;
-      return;
+    for (var left = 1; left <= leftGap; ++left) {
+      if (this.checkValid(this.x + left, this.y)) {
+        this.x += left;
+        return;
+      };
     };
-    if ((this.x + this.currentBlock.MATRIX_SIZE) >= this.COLS && this.checkValid(this.COLS - getMaxOfArray(this.currentBlock.rDistance), this.y)) {
-      this.x = this.COLS - getMaxOfArray(this.currentBlock.rDistance);
-      return;
+    for (var right = 1; right <= rightGap; ++right) {
+      if (this.checkValid(this.x - right, this.y)) {
+        this.x -= right;
+        return;
+      };
     };
     this.currentBlock.rotateRight();
   };
 };
 
 Game.prototype.rotateRight = function() {
+  var leftGap = this.currentBlock.MATRIX_SIZE - getMaxOfArray(this.currentBlock.lDistance);
+  var rightGap = this.currentBlock.MATRIX_SIZE - getMaxOfArray(this.currentBlock.rDistance);
+
   this.currentBlock.rotateRight();
   if (!this.checkValid()) {
     //Checking for available "Wall Kicks"
-    if (this.x < 0 && this.checkValid(getMaxOfArray(this.currentBlock.lDistance) - this.currentBlock.MATRIX_SIZE, this.y)) {
-      this.x = getMaxOfArray(this.currentBlock.lDistance) - this.currentBlock.MATRIX_SIZE;
-      return;
+    for (var left = 1; left <= leftGap; ++left) {
+      if (this.checkValid(this.x + left, this.y)) {
+        this.x += left;
+        return;
+      };
     };
-    if ((this.x + this.currentBlock.MATRIX_SIZE) >= this.COLS && this.checkValid(this.COLS - getMaxOfArray(this.currentBlock.rDistance), this.y)) {
-      this.x = this.COLS - getMaxOfArray(this.currentBlock.rDistance);
-      return;
+    for (var right = 1; right <= rightGap; ++right) {
+      if (this.checkValid(this.x - right, this.y)) {
+        this.x -= right;
+        return;
+      };
     };
     this.currentBlock.rotateLeft();
   };
@@ -111,7 +155,6 @@ Game.prototype.checkLeftLocked = function(checkX, checkY) {
     if (this.currentBlock.lDistance[i] != 0 && (checkY + i) >= 0 &&
           ((checkX + 3 - this.currentBlock.lDistance[i]) >= this.COLS ||
           this.matrix[checkY + i][checkX + 3 - this.currentBlock.lDistance[i]] != 0)) {
-      //console.log("y: " + checkY + ", x: " + (checkX + i) + " coord: " + (checkX + this.currentBlock.lDistance[i]) );
       return true;
     };
   };
@@ -123,7 +166,6 @@ Game.prototype.checkRightLocked = function(checkX, checkY) {
     if (this.currentBlock.rDistance[i] != 0 && (checkY + i) >= 0 &&
           ((checkX + this.currentBlock.rDistance[i]) >= this.COLS ||
           this.matrix[checkY + i][checkX + this.currentBlock.rDistance[i]] != 0)) {
-      //console.log("y: " + checkY + ", x: " + (checkX + i) + " coord: " + (checkX + this.currentBlock.rDistance[i]) );
       return true;
     };
   };
@@ -135,7 +177,6 @@ Game.prototype.checkDownLocked = function(checkX, checkY) {
     if (this.currentBlock.dDistance[i] != 0 && (checkY + this.currentBlock.dDistance[i]) >= 0 &&
           ((checkY + this.currentBlock.dDistance[i]) >= this.ROWS ||
           this.matrix[checkY + this.currentBlock.dDistance[i]][checkX + i] != 0)) {
-      //console.log("y: " + checkY + " coord: " + (checkY + this.currentBlock.dDistance[i]) + ", x: " + (checkX + i));
       return true;
     };
   };
@@ -182,7 +223,7 @@ Game.prototype.clearFilledRows = function() {
 Game.prototype.dropFilledRows = function() {
   for (var rowIndex in this.clearedRows) {
     this.matrix.splice(rowIndex, 1);
-    this.matrix.unshift(this.emptyRow);
+    this.matrix.unshift(this.emptyRow.slice());
   };
   //Also dropping isolated blocks due to gravity
 };

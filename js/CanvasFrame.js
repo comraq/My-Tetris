@@ -12,7 +12,7 @@ function CanvasFrame() {
 
   this.game;
   this.gameSpeed;
-  this.stopAuto = 0;
+  this.stopAnimation = 0;
 
   this.clearCount;
   this.CLEAR_REPEAT = 7;
@@ -61,11 +61,21 @@ CanvasFrame.prototype.getSize = function() {
         "\nBlockHeight: " + this.blockHeight + " BlockWidth: " + this.blockWidth);
 };
 
-CanvasFrame.prototype.newGame = function() {
+CanvasFrame.prototype.stopGame = function() {
+  cancelAnimationFrame(this.stopAnimation);
   this.game.init();
-
   this.clearAll();
-  this.generateBlock();
+};
+
+CanvasFrame.prototype.newGame = function() {
+  cancelAnimationFrame(this.stopAnimation);
+  if (confirm("Start a new game?")) {
+    this.game.init();
+    this.clearAll();
+    this.generateBlock();
+  } else {
+    this.drawLoop();
+  };
 };
 
 CanvasFrame.prototype.generateBlock = function(block) {
@@ -98,7 +108,7 @@ CanvasFrame.prototype.moveDown = function() {
 };
 
 CanvasFrame.prototype.instantDrop = function() {
-  cancelAnimationFrame(this.stopAuto);
+  cancelAnimationFrame(this.stopAnimation);
   this.game.instantDrop();
   this.draw();
 };
@@ -140,7 +150,6 @@ CanvasFrame.prototype.drawLoop = function() {
     if (!this.game.gameOver) {
       if (this.clearCount < this.CLEAR_REPEAT && (this.clearCount > 0 || this.game.clearFilledRows())) {
         for (var rowIndex in this.game.clearedRows) {
-          //console.log(rowIndex);
           if (this.clearCount % 2 == 0) {
             this.game.matrix[rowIndex] = this.game.emptyRow;
           } else {
@@ -148,11 +157,11 @@ CanvasFrame.prototype.drawLoop = function() {
           };
         };
         ++this.clearCount;
-        this.stopAuto = requestAnimationFrame(function() {frame.drawLoop()});
+        this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});
       } else if (this.clearCount == this.CLEAR_REPEAT) {
         this.game.dropFilledRows();
         ++this.clearCount;
-        this.stopAuto = requestAnimationFrame(function() {frame.drawLoop()});
+        this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});
       } else {
         this.generateBlock();
       };
@@ -160,10 +169,9 @@ CanvasFrame.prototype.drawLoop = function() {
       alert("Game Over! Your current score is: (to be implemented)");
     };
   } else {
-    this.stopAuto = requestAnimationFrame(function() {frame.drawLoop()});
+    this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});
     this.deltaY += this.gameSpeed;
   };
-  //console.log("block: " + this.game.currentBlock.colour + " this.game.y: " + this.game.y + " downLocked: " + this.game.currentBlock.downLocked + " GameOver: " + this.gameOver);
 };
 
 CanvasFrame.prototype.drawAll = function() {
@@ -182,7 +190,6 @@ CanvasFrame.prototype.drawBlock = function() {
     for (var c = 0; c < this.game.currentBlock.MATRIX_SIZE; ++c) {
       if (this.game.currentBlock.matrix[r][c] != 0) {
         this.drawSquare((this.game.x + c) * this.blockWidth, (this.game.y + r) * this.blockHeight);
-        //console.log("block: " + this.game.currentBlock.colour + " y: " + this.game.y + " dy: " + this.deltaY + " coord: " + r + "," + c + " downLocked: " + this.game.currentBlock.downLocked);
 
         //Marking gameMatrix with the colour of the currently dropped block 
         if(this.game.currentBlock.downLocked) {
@@ -190,7 +197,7 @@ CanvasFrame.prototype.drawBlock = function() {
             this.game.gameOver = true;
             return;
           } else {
-            this.game.addToMatrix(r, c);
+            this.game.addBlockToMatrix(r, c);
           };
         } else {
           this.prevX.push(this.game.x + c);
@@ -199,7 +206,12 @@ CanvasFrame.prototype.drawBlock = function() {
       };  
     };
   };
-  //console.log("currY * blockHeight: " + ((this.game.y + this.deltaY) * this.blockHeight) + " currY: " + (this.game.y + this.deltaY) + " y-coord: " + this.game.y);
+  /*if (this.game.currentBlock.downLocked) {
+    console.log("current block: ");
+    for (var row in this.game.currentBlock.matrix) console.log(this.game.currentBlock.matrix[row]);
+    console.log("dirMatrix: ");
+    for (var row in this.game.dirMatrix) console.log(this.game.dirMatrix[row]);    
+  };*/
 };
 
 /* Draws a square at coordinates x, y */
