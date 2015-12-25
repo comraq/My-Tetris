@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" type="text/javascript"></script>
+
+    <!-- Custom Stylesheets and Scripts -->
+    <link rel="stylesheet" href="css/main.css">
+    <script type="text/javascript" src="js/Utilities.js"></script>
+    <script type="text/javascript" src="js/Main.js"></script>
+    <script type="text/javascript" src="js/Game.js"></script>
+    <script type="text/javascript" src="js/Block.js"></script>
+    <script type="text/javascript" src="js/CanvasFrame.js"></script>
+
+    <title>My-Tetris</title>
+  </head>
+
+  <body>
+    <div class="tetris-container">
+      <div class="white-screen"></div>
+      <div class="canvas-container"><div class="white-screen"></div><canvas class="tetris-frame"></canvas></div>
+    </div>
+
+    <button class="test-buttons" id="get-size">Get Dimensions</button>
+    <button class="test-buttons" id="draw">Draw Square</button>
+    <button class="test-buttons" id="clear">Clear/Stop</button><br>
+
+    <button class="test-buttons" id="new-game">New Game</button>
+    <button class="test-buttons" id="test-rotate-left">Rotate Left</button>
+    <button class="test-buttons" id="test-rotate-right">Rotate Right</button>
+    <button class="test-buttons" id="test-instant-drop">Instant Drop</button>
+  </body>
+
+</html>

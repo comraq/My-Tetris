@@ -1,0 +1,49 @@
+body {
+  height: 100%;
+  width: 100%;
+
+  background-image: url("../img/tetris-background.png");
+  background-size: 50vw 100vh;
+}
+
+.tetris-container {
+  position: absolute;
+  left: 20%;
+
+  height: 100%;
+  width: 60%;
+
+  border: 2px dashed red;
+}
+
+.canvas-container {
+  position: relative;
+  top: 5%;
+  left: 2%;
+
+  height: 90%;
+  width: 50%;
+
+  border: 1px solid green;
+}
+
+.white-screen {
+  position: absolute;
+
+  height: 100%;
+  width: 100%;
+
+  background-color: #fff;
+  opacity: 0.4;
+}
+
+.tetris-frame {
+  height: 100%;
+  width: 100%;
+}
+
+.test-buttons {
+  position: relative;
+
+  float: right;
+}
