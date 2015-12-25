@@ -67,7 +67,6 @@ CanvasFrame.prototype.stopGame = function() {
     cancelAnimationFrame(this.stopAnimation);
     if (confirm("Are you sure you want to stop the current game?")) {
       this.gameOver();
-      this.gameActive = false;
     } else {
       this.drawLoop();
     };
@@ -88,6 +87,7 @@ CanvasFrame.prototype.newGame = function() {
 
 CanvasFrame.prototype.gameOver = function() {
   alert("Game Over! Your current score is: " + this.game.score);
+  this.gameActive = false;
 };
 
 CanvasFrame.prototype.generateBlock = function(block) {
