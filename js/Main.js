@@ -2,27 +2,11 @@ var Main = function() {
   var frame = new CanvasFrame();
   frame.init();
 
-  $("#get-size").click(function() {
-    frame.getSize();
-  });
-  $("#draw").click(function() {
-    frame.draw(frame.blockWidth);
-  });
-  $("#clear").click(function() {
-    frame.stopGame();
-  });
-  $("#new-game").click(function() {
-    frame.newGame();
-  });  
-  $("#test-rotate-left").click(function() {
-    frame.rotateLeft();
-  });
-  $("#test-rotate-right").click(function() {
-    frame.rotateRight();
-  });
-  $("#test-instant-drop").click(function() {
-    frame.instantDrop();
-  });
+  $("button").click(function() {executeButtonAction(this, frame)});
+
+  $(".level-button").on({mouseenter: peripherals.markActive,
+                         mouseleave: peripherals.markInactive,
+                         click:      function() {peripherals.updateLevel(this, frame)}});
 
   $("body").bind("keydown", function(event) {
     event.preventDefault();
@@ -59,6 +43,41 @@ function parseInput(key, frame) {
     default:
       //Nothing!
   };
+};
+
+function executeButtonAction(button, frame) {
+  switch($(button).attr("id")) {
+    case "new-game":
+      frame.newGame();
+      break;
+    case "stop":
+      frame.stopGame();
+      break;
+    default:
+      alert("Button action not yet implemented");
+  };
+};
+
+var peripherals = {
+  markInactive: function() {
+    if ($(this).hasClass("level-button")) $(this).fadeTo(100, 0.3);
+  },
+
+  markActive: function() {
+    if ($(this).hasClass("level-button")) $(this).fadeTo(100, 1);
+  },
+
+  updateLevel: function(levelButton, frame) {
+    if ($(levelButton).is("#increase-level")) {
+      if(frame.game.level < 10) {
+        ++frame.game.level;
+      };
+    } else if ($(levelButton).is("#decrease-level")) {
+      if(frame.game.level > 1) {
+        --frame.game.level;
+      };
+    };
+  }
 };
 
 $(document).ready(Main);

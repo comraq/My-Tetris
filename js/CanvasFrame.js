@@ -12,10 +12,11 @@ function CanvasFrame() {
 
   this.game;
   this.gameSpeed;
+  this.gameActive;
   this.stopAnimation = 0;
 
   this.clearCount;
-  this.CLEAR_REPEAT = 7;
+  this.CLEAR_REPEAT = 7; //This needs to be an odd value to end with the last cycle through the loop clearing filled rows
 
   this.coloursList = [
     "",
@@ -34,6 +35,7 @@ CanvasFrame.prototype.init = function() {
   this.context = this.canvas.getContext("2d");
   this.game = new Game();
   this.game.init();
+  this.gameActive = false;
 
   //Manually scaling up the canvas element size by the CSS transformed sizes
   this.updateSizes();
@@ -41,30 +43,35 @@ CanvasFrame.prototype.init = function() {
 
 /* We resize canvas to match the current CSS transformed sizes */
 CanvasFrame.prototype.updateSizes = function() {
-  this.canvas.height = this.canvas.offsetHeight;
-  this.canvas.width = this.canvas.offsetWidth;
+  if (this.canvas.height != this.canvas.offsetHeight || this.canvas.width != this.canvas.offsetWidth) {
+    this.canvas.height = this.canvas.offsetHeight;
+    this.canvas.width = this.canvas.offsetWidth;
 
-  this.height = this.canvas.height;
-  this.width = this.canvas.width;
-  this.blockHeight = this.height / this.game.ROWS;
-  this.blockWidth = this.width / this.game.COLS;
+    this.height = this.canvas.height;
+    this.width = this.canvas.width;
+    this.blockHeight = this.height / this.game.ROWS;
+    this.blockWidth = this.width / this.game.COLS;
 
-  //Restore the drawing styles lost due to resizing
-  if (typeof this.game.currentBlock !== "undefined") this.setColours();
+    //Restore the drawing styles lost due to resizing
+    if (typeof this.game.currentBlock !== "undefined") this.setColours();
+  };
+};
 
+CanvasFrame.prototype.updateSpeed = function() {
   //Update the rate of which blocks fall
   this.gameSpeed = (parseFloat(this.game.level) + 3) * 0.01;
 };
 
-CanvasFrame.prototype.getSize = function() {
-  alert("Height: " + this.height + " Width: " + this.width +
-        "\nBlockHeight: " + this.blockHeight + " BlockWidth: " + this.blockWidth);
-};
-
 CanvasFrame.prototype.stopGame = function() {
-  cancelAnimationFrame(this.stopAnimation);
-  this.game.init();
-  this.clearAll();
+  if (this.gameActive) {
+    cancelAnimationFrame(this.stopAnimation);
+    if (confirm("Are you sure you want to stop the current game?")) {
+      this.gameOver();
+      this.gameActive = false;
+    } else {
+      this.drawLoop();
+    };
+  };
 };
 
 CanvasFrame.prototype.newGame = function() {
@@ -72,10 +79,15 @@ CanvasFrame.prototype.newGame = function() {
   if (confirm("Start a new game?")) {
     this.game.init();
     this.clearAll();
+    this.gameActive = true;
     this.generateBlock();
-  } else {
+  } else if (this.gameActive) {
     this.drawLoop();
   };
+};
+
+CanvasFrame.prototype.gameOver = function() {
+  alert("Game Over! Your current score is: " + this.game.score);
 };
 
 CanvasFrame.prototype.generateBlock = function(block) {
@@ -132,6 +144,9 @@ CanvasFrame.prototype.draw = function() {
 /* The method that is looped for the necessary animation */
 CanvasFrame.prototype.drawLoop = function() {
   var frame = this;
+  this.updateSizes();
+  this.updateSpeed();
+  this.game.updatePeripherals();
 
   if (this.deltaY > 1) {
     this.game.moveDown();
@@ -166,7 +181,7 @@ CanvasFrame.prototype.drawLoop = function() {
         this.generateBlock();
       };
     } else {
-      alert("Game Over! Your current score is: (to be implemented)");
+      this.gameOver();
     };
   } else {
     this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});

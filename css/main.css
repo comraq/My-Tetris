@@ -42,8 +42,110 @@ body {
   width: 100%;
 }
 
-.test-buttons {
+.button-container {
   position: relative;
 
+  float: right;
+}
+
+button:hover { transform: scale(1.1); }
+
+.peripheral-container {
+  position: absolute;
+  top: 5%;
+  right: 0%;
+  
+  min-width: 20%;
+
+  border: 1px solid #eecd98;
+}
+
+.scoreboard {
+  position: relative;
+
+  border: 1px solid red;
+  border-radius: 5%;
+  background-color: #fdd;
+}
+
+.score-components {
+  position: relative;
+}
+
+p.score-components {
+  color: #844;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+#score-label {
+  float: left;
+}
+
+.level-container {
+  position: relative;
+
+  border: 1px solid green;
+  border-radius: 5%;
+  background-color: #dfd;
+}
+
+.level-components {
+  position: relative;
+}
+
+p.level-components {
+  color: #373;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.level-button-container {
+  position: absolute;
+  top: 15%;
+  right: 0;
+}
+
+.level-button {
+  opacity: 0.3;
+}
+
+.level-button:hover { transform: scale(1.5); }
+
+#level-label {
+  float: left;
+}
+
+.info-container {
+  position: absolute;
+  top: 30%;
+  right: 5%;
+
+  min-width: 33%;
+
+  border: 2px dashed blue;
+  border-radius: 5%;
+  background-color: #ddf;
+}
+
+.info-header {
+  position: relative;
+  left: 25%;
+
+  color: #33a;
+}
+
+.info-body {
+  position: relative;
+
+  color: #66c;
+  font-size: 18px;
+}
+
+.info-col-1 {
+  float: left;
+}
+
+.info-col-2 {
   float: right;
 }

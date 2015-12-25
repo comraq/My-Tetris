@@ -5,13 +5,14 @@ function Game() {
   this.y = 0;
 
   this.matrix;
-  this.level = 1;
+  this.level;
+  this.score;
   this.currentBlock;
-  this.dirMatrix;
+  /*this.dirMatrix;
   this.DIR_LEFT = 1;
   this.DIR_RIGHT = 2;
   this.DIR_BOTH = 3;
-  this.DIR_VERTICAL = 4;
+  this.DIR_VERTICAL = 4;*/
 
   this.clearedRows;
   this.emptyRow;
@@ -21,7 +22,10 @@ function Game() {
 
 Game.prototype.init = function() {
   this.matrix = create2DArray(this.ROWS, this.COLS);
-  this.dirMatrix = create2DArray(this.ROWS, this.COLS);
+  this.score = 0;
+  this.level = 1;
+  this.updatePeripherals();
+  //this.dirMatrix = create2DArray(this.ROWS, this.COLS);
   this.emptyRow = setAll([], this.COLS, 0);
   this.gameOver = false;
 };
@@ -34,6 +38,7 @@ Game.prototype.generateBlock = function(block) {
   };
   this.x = (this.COLS - this.currentBlock.MATRIX_SIZE) / 2;
   this.y = this.currentBlock.y;
+  this.updatePeripherals();
   this.clearedRows = {};
 };
 
@@ -226,4 +231,13 @@ Game.prototype.dropFilledRows = function() {
     this.matrix.unshift(this.emptyRow.slice());
   };
   //Also dropping isolated blocks due to gravity
+};
+
+Game.prototype.updatePeripherals = function() {
+  var numLinesCleared = numProperties(this.clearedRows);
+  this.score += 10 * Math.pow(numLinesCleared, 2);
+  if (this.level < 10 && (this.score / 100 - this.level) >= 1) ++this.level;
+
+  document.getElementById("level-field").innerHTML = " " + this.level;
+  document.getElementById("score-field").innerHTML = this.score; 
 };
