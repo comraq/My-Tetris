@@ -16,6 +16,19 @@ body {
   border: 2px dashed red;
 }
 
+.title {
+  position: absolute;
+  
+  width: 53%;
+
+  font-family: verdana;
+  font-size: 40px;
+  font-weight: bold;
+  color: #7b7;
+  text-shadow: 3px 3px 0px #fff;
+  text-align: center;
+}
+
 .canvas-container {
   position: relative;
   top: 5%;
