@@ -71,10 +71,12 @@ var peripherals = {
     if ($(levelButton).is("#increase-level")) {
       if(frame.game.level < 10) {
         ++frame.game.level;
+        frame.game.calculateNextScore();
       };
     } else if ($(levelButton).is("#decrease-level")) {
       if(frame.game.level > 1) {
         --frame.game.level;
+        frame.game.calculateNextScore();
       };
     };
   }

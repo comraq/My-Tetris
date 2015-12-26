@@ -17,6 +17,7 @@ function CanvasFrame() {
 
   this.clearCount;
   this.CLEAR_REPEAT = 7; //This needs to be an odd value to end with the last cycle through the loop clearing filled rows
+  this.dropChainBlock;
 
   this.coloursList = [
     "",
@@ -79,6 +80,7 @@ CanvasFrame.prototype.newGame = function() {
     this.game.init();
     this.clearAll();
     this.gameActive = true;
+    this.dropChainBlock = false;
     this.generateBlock();
   } else if (this.gameActive) {
     this.drawLoop();
@@ -146,7 +148,7 @@ CanvasFrame.prototype.drawLoop = function() {
   var frame = this;
   this.updateSizes();
   this.updateSpeed();
-  this.game.updatePeripherals();
+  this.updatePeripherals();
 
   if (this.deltaY > 1) {
     this.game.moveDown();
@@ -163,7 +165,9 @@ CanvasFrame.prototype.drawLoop = function() {
   };
   if (this.game.currentBlock.downLocked) {
     if (!this.game.gameOver) {
+
       if (this.clearCount < this.CLEAR_REPEAT && (this.clearCount > 0 || this.game.clearFilledRows())) {
+        //Loop through frames for flashing the rows which are about to be cleared
         for (var rowIndex in this.game.clearedRows) {
           if (this.clearCount % 2 == 0) {
             this.game.matrix[rowIndex] = this.game.emptyRow;
@@ -173,12 +177,23 @@ CanvasFrame.prototype.drawLoop = function() {
         };
         ++this.clearCount;
         this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});
+
       } else if (this.clearCount == this.CLEAR_REPEAT) {
+        //Actually remove the cleared rows from game.matrix
         this.game.dropFilledRows();
         ++this.clearCount;
+        this.dropChainBlock = this.game.dropChainBlocks();
         this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});
+
       } else {
-        this.generateBlock();
+        if (this.dropChainBlock) {
+          //Chain reaction, frames for dropping the free blocks
+          this.dropChainBlock = this.game.dropChainBlocks();
+          this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});
+        } else {
+          //Time to generate new block
+          this.generateBlock();
+        };
       };
     } else {
       this.gameOver();
@@ -221,12 +236,6 @@ CanvasFrame.prototype.drawBlock = function() {
       };  
     };
   };
-  /*if (this.game.currentBlock.downLocked) {
-    console.log("current block: ");
-    for (var row in this.game.currentBlock.matrix) console.log(this.game.currentBlock.matrix[row]);
-    console.log("dirMatrix: ");
-    for (var row in this.game.dirMatrix) console.log(this.game.dirMatrix[row]);    
-  };*/
 };
 
 /* Draws a square at coordinates x, y */
@@ -252,3 +261,8 @@ CanvasFrame.prototype.clearCurrent = function() {
     };
   };
 };
+
+CanvasFrame.prototype.updatePeripherals = function() {
+  document.getElementById("level-field").innerHTML = " " + this.game.level;
+  document.getElementById("score-field").innerHTML = this.game.score; 
+}
