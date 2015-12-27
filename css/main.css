@@ -13,7 +13,7 @@ body {
   height: 100%;
   width: 60%;
 
-  border: 2px dashed red;
+  border: 2px dashed #1a1;
 }
 
 .title {
@@ -52,6 +52,46 @@ body {
 
 .tetris-frame {
   height: 100%;
+  width: 100%;
+}
+
+.preview-container {
+  position: absolute;
+  top: 5%;
+  left: 52%;
+
+  height: 12%;
+  width: 12%;
+
+  border: 1px solid green;
+}
+
+.preview-title {
+  position: absolute;
+  height: 20%;
+  width: 100%;
+
+  border-bottom: 1px solid #60f;
+  background-color: #0f0;
+
+  text-align: center;
+  font-weight: bold;
+  color: #077;
+}
+
+.preview-screen {
+  top: 20%;
+
+  height: 80%;
+
+  background-color: #cff;
+}
+
+.preview-frame {
+  position: absolute;
+  top: 20%;
+  
+  height: 80%;
   width: 100%;
 }
 
@@ -134,7 +174,7 @@ p.level-components {
   top: 30%;
   right: 5%;
 
-  min-width: 33%;
+  min-width: 35%;
 
   border: 2px dashed blue;
   border-radius: 5%;

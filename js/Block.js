@@ -97,42 +97,42 @@ Block.prototype.updateDistance = function() {
   };
 };
 
-/* . x . . 
- * . x . . 
- * . x . . 
- * . x . . 
+/* . . . . 
+ * x x x x 
+ * . . . . 
+ * . . . . 
  */
 function LineBlock(id) {
   Block.call(this, id);
 
-  this.y = -4;
+  this.y = -2;
   this.colour = 1;
 
-  this.matrix[0][1] = this.colour;
+  this.matrix[1][0] = this.colour;
   this.matrix[1][1] = this.colour;
-  this.matrix[2][1] = this.colour;
-  this.matrix[3][1] = this.colour;
+  this.matrix[1][2] = this.colour;
+  this.matrix[1][3] = this.colour;
   this.updateDistance();
 };
 
 LineBlock.prototype = new Block();
 LineBlock.prototype.constructor = LineBlock;
 
-/* . x x . 
+/* . . . . 
  * . x x . 
- * . . . . 
+ * . x x . 
  * . . . . 
  */
 function SquareBlock(id) {
   Block.call(this, id);
 
-  this.y = -2;
+  this.y = -3;
   this.colour = 2;
 
-  this.matrix[0][1] = this.colour;
-  this.matrix[0][2] = this.colour;
   this.matrix[1][1] = this.colour;
   this.matrix[1][2] = this.colour;
+  this.matrix[2][1] = this.colour;
+  this.matrix[2][2] = this.colour;
   this.updateDistance();
 };
 

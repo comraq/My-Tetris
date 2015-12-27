@@ -25,7 +25,8 @@
       <div class="title">My-Tetris</div>
       <div class="button-container">
         <button id="new-game">New Game</button>
-        <button id="stop">Stop</button>
+        <button id="stop">Quit</button>
+        <button id="pause-resume">Pause/Resume</button>
       </div>
       <div class="peripheral-container">
         <div class="scoreboard"><p class="score-components" id="score-label">Score:</p><p class="score-components" id="score-field">&nbsp</p></div>
@@ -45,8 +46,12 @@
           Down-Arrow:<br>
           Left-Arrow:<br>
           Right-Arrow:<br>
-          Comma Key:<br>
-          Period Key:<br>
+          Z or , Key:<br>
+          X or . Key:<br>
+          <br>
+          N Key:<br>
+          Q Key:<br>
+          SpaceBar:<br>
         </p>
         <p class="info-body info-col-2">
           Instant Drop<br>
@@ -55,9 +60,14 @@
           Move Right<br>
           Rotate Left<br>
           Rotate Right<br>
+          <br>
+          New Game<br>
+          Quit<br>
+          Pause/Resume<br>
         </p>
-      </div>  
+      </div>
       <div class="canvas-container"><div class="white-screen"></div><canvas class="tetris-frame"></canvas></div>
+      <div class="preview-container"><div class="white-screen preview-screen"></div><div class="preview-title">Next</div><canvas class="preview-frame"></canvas></div>
     </div>
 
 
