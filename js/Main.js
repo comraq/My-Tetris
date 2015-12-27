@@ -16,36 +16,53 @@ var Main = function() {
 function parseInput(event, frame) {
   var key = event.keyCode;
   switch(key) {
-    case 37:
-      //Left Arrow
+    case 32: //Spacebar
+      event.preventDefault();
+      frame.pauseResumeGame();
+      break;
+
+    case 37: //Left Arrow
       event.preventDefault();
       frame.moveLeft();
       break;
-    case 38:
-      //Up Arrow
+
+    case 38: //Up Arrow
       event.preventDefault();
       frame.instantDrop();
       break;
-    case 39:
-      //Right Arrow
+
+    case 39: //Right Arrow
       event.preventDefault();
       frame.moveRight();
       break;
-    case 40:
-      //Down Arrow
+
+    case 40: //Down Arrow
       event.preventDefault();
       frame.moveDown();
       break;
-    case 188:
-      // ','
+
+    case 90: //Z Key
+    case 188: //, Key
       event.preventDefault();
       frame.rotateLeft();
       break;
-    case 190:
-      // '.'
+
+    case 88: //X Key  
+    case 190: //. Key
       event.preventDefault();
       frame.rotateRight();
       break;
+
+    case 78: //N Key
+      event.preventDefault();
+      frame.newGame();
+      break;
+    
+    case 81: //Q Key
+      event.preventDefault();
+      frame.stopGame();
+      break;
+
     default:
       //Nothing!
   };
@@ -58,6 +75,9 @@ function executeButtonAction(button, frame) {
       break;
     case "stop":
       frame.stopGame();
+      break;
+    case "pause-resume":
+      frame.pauseResumeGame();
       break;
     default:
       alert("Button action not yet implemented");

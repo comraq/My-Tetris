@@ -10,9 +10,12 @@ function CanvasFrame() {
   this.blockHeight;
   this.blockWidth;
 
+  this.previewFrame;
+
   this.game;
   this.gameSpeed;
   this.gameActive;
+  this.gamePaused;
   this.stopAnimation = 0;
 
   this.clearCount;
@@ -40,6 +43,10 @@ CanvasFrame.prototype.init = function() {
   this.game = new Game();
   this.game.init();
   this.gameActive = false;
+  this.gamePaused = false;
+
+  this.previewFrame = new PreviewFrame();
+  this.previewFrame.init();
 
   //Manually scaling up the canvas element size by the CSS transformed sizes
   this.updateSizes();
@@ -69,7 +76,7 @@ CanvasFrame.prototype.updateSpeed = function() {
 CanvasFrame.prototype.stopGame = function() {
   if (this.gameActive) {
     cancelAnimationFrame(this.stopAnimation);
-    if (confirm("Are you sure you want to stop the current game?")) {
+    if (confirm("Are you sure you want to quit the current game?")) {
       this.gameOver();
     } else {
       this.draw();
@@ -84,21 +91,43 @@ CanvasFrame.prototype.newGame = function() {
     this.clearAll();
 
     this.gameActive = true;
+    this.gamePaused = false;
     this.dropChainBlock = false;
+    document.getElementById("pause-resume").innerHTML = "Pause";
     
+    this.previewNext();
     this.generateBlock();
   } else if (this.gameActive) {
     this.draw();
   };
 };
 
+CanvasFrame.prototype.pauseResumeGame = function() {
+  if (this.gameActive) {
+    var button = document.getElementById("pause-resume");
+    if (!this.gamePaused) {
+      cancelAnimationFrame(this.stopAnimation);
+      this.gamePaused = true;
+      button.innerHTML = "Resume";
+    } else {
+      this.gamePaused = false;
+      button.innerHTML = "Pause";
+      this.draw();
+    };
+  };
+};
+
 CanvasFrame.prototype.gameOver = function() {
   alert("Game Over! Your current score is: " + this.game.score);
   this.gameActive = false;
+  this.gamePaused = false;
+  document.getElementById("pause-resume").innerHTML = "Pause/Resume";
 };
 
-CanvasFrame.prototype.generateBlock = function(block) {
-  this.game.generateBlock(block);
+CanvasFrame.prototype.generateBlock = function() {
+  var tempBlock = this.previewFrame.currentBlock;
+  this.previewNext();
+  this.game.generateBlock(tempBlock);
   this.clearCount = 0;
   this.setColours();
   this.draw();
@@ -112,32 +141,40 @@ CanvasFrame.prototype.setColours = function(colour) {
   };
 };
 
+CanvasFrame.prototype.previewNext = function() {
+  this.game.generateBlock();
+  this.previewFrame.currentBlock = this.game.currentBlock;
+  this.previewFrame.showNextBlock(this);
+};
+
 /* Methods for controlling the current active tetris block */
 
 CanvasFrame.prototype.moveLeft = function() {
-  this.game.moveLeft();
+  if (!this.gamePaused) this.game.moveLeft();
 };
 
 CanvasFrame.prototype.moveRight = function() {
-  this.game.moveRight();
+  if (!this.gamePaused) this.game.moveRight();
 };
 
 CanvasFrame.prototype.moveDown = function() {
-  this.game.moveDown();
+  if (!this.gamePaused) this.game.moveDown();
 };
 
 CanvasFrame.prototype.instantDrop = function() {
-  cancelAnimationFrame(this.stopAnimation);
-  this.game.instantDrop();
-  this.draw();
+  if (!this.gamePaused) {
+    cancelAnimationFrame(this.stopAnimation);
+    this.game.instantDrop();
+    this.draw();
+  };
 };
 
 CanvasFrame.prototype.rotateLeft = function() {
-  this.game.rotateLeft();
+  if (!this.gamePaused) this.game.rotateLeft();
 };
 
 CanvasFrame.prototype.rotateRight = function() {
-  this.game.rotateRight();
+  if (!this.gamePaused) this.game.rotateRight();
 };
 
 /* Methods for drawing and clearing the canvas */
@@ -278,3 +315,51 @@ CanvasFrame.prototype.updatePeripherals = function() {
   document.getElementById("level-field").innerHTML = " " + this.game.level;
   document.getElementById("score-field").innerHTML = this.game.score; 
 }
+
+function PreviewFrame() {
+  this.canvas;
+  this.context;
+  this.height;
+  this.width;
+  this.blockHeight;
+  this.blockWidth;
+
+  this.BLOCK_SIZE = 6;
+  this.originX;
+  this.originY;
+
+  this.currentBlock;
+};
+
+PreviewFrame.prototype.init = function() {
+  this.canvas = document.getElementsByClassName("preview-frame")[0];
+  this.context = this.canvas.getContext("2d");
+
+  this.updateSizes();
+  this.originX = 1;
+  this.originY = 1;
+};
+
+PreviewFrame.prototype.updateSizes = function() {
+  if (this.canvas.height != this.canvas.offsetHeight || this.canvas.width != this.canvas.offsetWidth) {
+    this.canvas.height = this.canvas.offsetHeight;
+    this.canvas.width = this.canvas.offsetWidth;
+
+    this.height = this.canvas.height;
+    this.width = this.canvas.width;
+    this.blockHeight = this.height / this.BLOCK_SIZE;
+    this.blockWidth = this.width / this.BLOCK_SIZE;
+  };
+};
+
+PreviewFrame.prototype.showNextBlock = function(frame) {
+  frame.clearAll.call(this);
+  frame.setColours.call(this, frame.coloursList[this.currentBlock.colour]);
+  for (var r = this.currentBlock.MATRIX_SIZE - 1; r >= 0; --r) {
+    for (var c = 0; c < this.currentBlock.MATRIX_SIZE; ++c) {
+      if (this.currentBlock.matrix[r][c] != 0) {
+        frame.drawSquare.call(this, (this.originX + c) * this.blockWidth, (this.originY + r) * this.blockHeight);
+      };
+    };
+  };
+};
