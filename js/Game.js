@@ -153,9 +153,9 @@ Game.prototype.rotateRight = function() {
 
 Game.prototype.checkLeftLocked = function(checkX, checkY) {
   for (var i = 0; i < this.currentBlock.lDistance.length; ++i) {
-    if (this.currentBlock.lDistance[i] != 0 && (checkY + i) >= 0 &&
-          ((checkX + 3 - this.currentBlock.lDistance[i]) >= this.COLS ||
-          this.matrix[checkY + i][checkX + 3 - this.currentBlock.lDistance[i]] != 0)) {
+    if (this.currentBlock.lDistance[i] != 0 &&
+         ((checkX + 3 - this.currentBlock.lDistance[i]) < 0 ||
+         ((checkY + i) >= 0 && this.matrix[checkY + i][checkX + 3 - this.currentBlock.lDistance[i]] != 0))) {
       return true;
     };
   };
@@ -164,9 +164,9 @@ Game.prototype.checkLeftLocked = function(checkX, checkY) {
 
 Game.prototype.checkRightLocked = function(checkX, checkY) {
   for (var i = 0; i < this.currentBlock.rDistance.length; ++i) {
-    if (this.currentBlock.rDistance[i] != 0 && (checkY + i) >= 0 &&
-          ((checkX + this.currentBlock.rDistance[i]) >= this.COLS ||
-          this.matrix[checkY + i][checkX + this.currentBlock.rDistance[i]] != 0)) {
+    if (this.currentBlock.rDistance[i] != 0 &&
+         ((checkX + this.currentBlock.rDistance[i]) >= this.COLS ||
+         ((checkY + i) >= 0 && this.matrix[checkY + i][checkX + this.currentBlock.rDistance[i]] != 0))) {            
       return true;
     };
   };
