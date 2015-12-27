@@ -9,16 +9,18 @@ function Game() {
   this.score;
   this.nextLevelScore;
   this.currentBlock;
-  this.dirMatrix;
-  this.DIR_LEFT = 2;
-  this.DIR_UP = 3;
-  this.DIR_RIGHT = 5;
-  this.DIR_DOWN = 7;
+  this.idMatrix;
+  this.idList;
+  this.idCount;
 
   this.clearedRows;
   this.emptyRow;
   this.chainBlocks;
+
+  this.clearChain;
+  this.chainLoop;
   this.gameOver;
+  this.verbose = false;
 };
 
 Game.prototype.init = function() {
@@ -27,33 +29,41 @@ Game.prototype.init = function() {
   this.level = 1;
   this.calculateNextScore();
   this.calculatePeripherals();
-  this.dirMatrix = create2DArray(this.ROWS, this.COLS);
-  this.chainBlocks = [];
+
+  this.idMatrix = create2DArray(this.ROWS, this.COLS);
+  this.idList = this.createIdList(this.ROWS * this.COLS);
+  this.idCount = setAll([], (this.ROWS * this.COLS) + 1, 0);
+  this.clearedRows = {};
+  this.clearChain = 0;
+
   this.emptyRow = setAll([], this.COLS, 0);
   this.gameOver = false;
 };
 
+Game.prototype.createIdList = function(length) {
+  var list = [];
+  for (var i = 0; i < length; ++i) {
+    list.push(length - i);
+  };
+  return list;
+};
+
 Game.prototype.generateBlock = function(block) {
   if (typeof block === "undefined") {
-    this.currentBlock = getNewBlock();
+    this.currentBlock = getNewBlock(this.idList.pop());
   } else {
     this.currentBlock = block;
   };
   this.x = (this.COLS - this.currentBlock.MATRIX_SIZE) / 2;
   this.y = this.currentBlock.y;
-  this.calculatePeripherals();
-  this.clearedRows = {};
-  this.chainBlocks = [];
+  this.chainLoop = false;
+  this.clearChain = 0;
 };
 
 Game.prototype.addBlockToMatrix = function(row, col) {
   this.matrix[this.y + row][this.x + col] = this.currentBlock.matrix[row][col];
-  var dir = 1;
-  if (col != 0 && this.currentBlock.matrix[row][col - 1] != 0) dir *= this.DIR_LEFT;
-  if (row != 0 && this.currentBlock.matrix[row - 1][col] != 0) dir *= this.DIR_UP;
-  if (col != this.currentBlock.MATRIX_SIZE - 1 && this.currentBlock.matrix[row][col + 1] != 0) dir *= this.DIR_RIGHT;
-  if (row != this.currentBlock.MATRIX_SIZE - 1 && this.currentBlock.matrix[row + 1][col] != 0) dir *= this.DIR_DOWN;
-  this.dirMatrix[this.y + row][this.x + col] = dir;
+  this.idMatrix[this.y + row][this.x + col] = this.currentBlock.id;
+  ++this.idCount[this.currentBlock.id];
 };
 
 /* Methods for controlling the current active tetris block */
@@ -191,127 +201,190 @@ Game.prototype.checkValid = function(checkX, checkY) {
 
 Game.prototype.clearFilledRows = function() {
   var rowFilled;
-  for (var i = 0; i < this.currentBlock.lDistance.length; ++i) {
-    if (this.currentBlock.lDistance[i] != 0) {
+  if (!this.chainLoop) {
+    for (var i = 0; i < this.currentBlock.lDistance.length; ++i) {
+      if (this.currentBlock.lDistance[i] != 0) {
+        rowFilled = true;
+        for (var c = 0; c < this.COLS; ++c) {
+          if (this.matrix[this.y + i][c] == 0) {
+            rowFilled = false;
+            break;
+          };
+        };
+        if (rowFilled) this.clearedRows[this.y + i] = this.matrix[this.y + i];  
+      };
+    };
+  } else {
+    for (var r = this.ROWS - 1; r >= 0; --r) {
       rowFilled = true;
       for (var c = 0; c < this.COLS; ++c) {
-        if (this.matrix[this.y + i][c] == 0) {
+        if (this.matrix[r][c] == 0) {
           rowFilled = false;
           break;
         };
       };
-      if (rowFilled) this.clearedRows[this.y + i] = this.matrix[this.y + i];  
+      if (rowFilled) this.clearedRows[r] = this.matrix[r]; 
     };
   };
 
   if (isEmpty(this.clearedRows)) {
     return false;
   } else {
+    this.calculatePeripherals();
     return true;
   };
 };
 
 Game.prototype.dropFilledRows = function() {
-  var chainSquares = [];
+  if (this.verbose) {
+    console.log("idMatrix: ");
+    for (var row in this.idMatrix) console.log(this.idMatrix[row]);
+  };
+
   var rowList = [];
+  var clearedId;
   for (var rowIndex in this.clearedRows) {
-    this.updateDirMatrix(parseInt(rowIndex));
+    this.updateIdMatrix(parseInt(rowIndex));
+    for (var i = 0; i < this.clearedRows[rowIndex].length; ++i) {
+      clearedId = this.idMatrix[rowIndex][i];
+      if (--this.idCount[clearedId] == 0) this.idList.push(clearedId); 
+    };
 
     if ((rowIndex < this.ROWS - 1) && (!this.clearedRows.hasOwnProperty(parseInt(rowIndex) + 1))) rowList.push(this.matrix[parseInt(rowIndex) + 1]);
     this.matrix.splice(rowIndex, 1);
     this.matrix.unshift(this.emptyRow.slice());
-    this.dirMatrix.splice(rowIndex, 1);
-    this.dirMatrix.unshift(this.emptyRow.slice());
+    this.idMatrix.splice(rowIndex, 1);
+    this.idMatrix.unshift(this.emptyRow.slice());
+  };
+  
+  //Resetting previously cleared rows and discovered chain blocks
+  this.clearedRows = {};
+  this.chainBlocks = {};
+
+  var rowEmpty, id;
+  for (var r = this.ROWS - 1; r >= 0; --r) {
+    rowEmpty = true;
+    for (var c = 0; c < this.COLS; ++c) {
+      if (this.matrix[r][c] != 0) {
+        rowEmpty = false;
+        id = this.idMatrix[r][c];
+        if (!this.chainBlocks.hasOwnProperty(id)) {
+          this.chainBlocks[id] = [[r, c]];
+        };
+      };
+    };
+    if (rowEmpty) break;
   };
 
-  if (false) {
-  var colList = [];
-  for (var i = 0; i < rowList.length; ++i) {
-    for (var c = 0; c < this.COLS; ++c) {
-      if (rowList[i][c] == 0 && colList.indexOf(c) == -1) {
-        for (var r = this.matrix.indexOf(rowList[i]) - 1; r >= 0; --r) {
-          if (this.matrix[r][c] != 0) chainSquares.push([r, c]);
-        };
-        colList.push(c);
-      };
+  //Find all squares associated with the chain blocks
+  for (var blockId in this.chainBlocks) {
+    if (this.chainBlocks[blockId].length < this.idCount[blockId]) {
+      this.findEntireBlock(blockId, this.chainBlocks[blockId][0][0], this.chainBlocks[blockId][0][1], r);
     };
   };
 
-  //Trace all the free block entities in the list of squares
-  /*var len = chainSquares.length;
-  for (var i = 0; i < len; ++i) {
-    this.chainBlocks.push(this.traceBlocks(chainSquare[i], chainSquares));
-    len = chainSquares.length;
-  };*/
-
-
-
+  if (this.verbose) {
     console.log("current block: ");
     for (var row in this.currentBlock.matrix) console.log(this.currentBlock.matrix[row]);
-    console.log("dirMatrix: ");
-    for (var row in this.dirMatrix) console.log(this.dirMatrix[row]);
-    console.log("chainSquares: ");
-    for (var square in chainSquares) console.log(chainSquares[square]);
-    console.log("colList: " + colList + "chainBlocks:");
-    for (var block in this.chainBlocks) console.log(this.chainBlocks[block]);
+    console.log("idMatrix: ");
+    for (var row in this.idMatrix) console.log(this.idMatrix[row]);
+    console.log("idCount: " + this.idCount);
+    console.log("idList: " + this.idList);
+    console.log("After:");
+    for (var blockId in this.chainBlocks) {
+      for (var coord in this.chainBlocks[blockId]) console.log("id: " + blockId + " coord: " + this.chainBlocks[blockId][coord]);
+    };
   };
 };
 
 Game.prototype.dropChainBlocks = function() {
-  return false;
+  this.chainLoop = true;
+  var locked, block, r, c, colour, skip;
+  if (!isEmpty(this.chainBlocks)) {
+    for (var id in this.chainBlocks) {
+      block = this.chainBlocks[id];
+      locked = false;
+      skip = false;
+      for (var i = 0; i < block.length; ++i) {
+        r = block[i][0];
+        c = block[i][1];
+        if (r + 1 == this.ROWS || (this.idMatrix[r + 1][c] != 0 && !this.chainBlocks.hasOwnProperty(this.idMatrix[r + 1][c]))) {
+          locked = true;
+          break;
+        } else if (this.idMatrix[r + 1][c] != id && this.chainBlocks.hasOwnProperty(this.idMatrix[r + 1][c])) {
+          skip = true;
+          break;
+        };
+      };
+      if (locked) {
+        delete this.chainBlocks[id];
+      } else if (!skip) {
+        colour = this.matrix[block[0][0]][block[0][1]];
+        for (var i = 0; i < block.length; ++i) {
+          r = block[i][0];
+          c = block[i][1];
+          this.matrix[r][c] = 0;
+          this.idMatrix[r][c] = 0;
+          this.matrix[r + 1][c] = colour;
+          this.idMatrix[r + 1][c] = parseInt(id);
+          ++block[i][0];
+        };  
+      };
+    };
+    return true;
+  } else {
+    return false;
+  };
 };
 
-//Updates the direction in blocks above and below the cleared row
-Game.prototype.updateDirMatrix = function(clearedRow) {
+//Updates the idMatrix in case blocks are split by row clear
+Game.prototype.updateIdMatrix = function(row) {
+  if (row > 0 && row < this.ROWS - 1) {
+    var commonIdList = [];
+    for (var aboveCol = 0; aboveCol < this.COLS; ++aboveCol) {
+      //Find common id in the above and below row arrays
+      if (this.idMatrix[row - 1][aboveCol] != 0) {
+        for (var belowCol = 0; belowCol < this.COLS; ++belowCol) {
+          if (this.idMatrix[row - 1][aboveCol] == this.idMatrix[row + 1][belowCol]) {
+            commonIdList.push(this.idMatrix[row - 1][aboveCol]);
+            break;
+          };
+        };
+      };
+    };
+    var newId;    
+    for (var i = 0; i < commonIdList.length; ++i) {
+      newId = this.idList.pop();
+      for (var j = 1; j <= this.currentBlock.MATRIX_SIZE - 2; ++j) {
+        if (row + j >= this.ROWS) break;
+        for (var c = 0; c < this.COLS; ++c) {
+          if (this.idMatrix[row + j][c] == commonIdList[i]) {
+            this.idMatrix[row + j][c] = newId;
+            ++this.idCount[newId];
+            --this.idCount[commonIdList[i]];
+          };
+        };
+      };
+    };
+  };  
+};
+
+//Finds all squares in the frame given a blockId
+Game.prototype.findEntireBlock = function(id, foundRow, foundCol, topRow) {
   for (var c = 0; c < this.COLS; ++c) {
-    if ((clearedRow > 0) && (this.dirMatrix[clearedRow - 1][c] % this.DIR_DOWN == 0)) {
-      this.dirMatrix[clearedRow - 1][c] /= this.DIR_DOWN;
+    for (var r = foundRow; r > topRow; --r) {
+      if (this.idMatrix[r][c] == id && (r != foundRow || c != foundCol)) {
+        this.chainBlocks[id].push([r, c]);
+      };
+      if (this.chainBlocks[id].length == this.idCount[id]) return;
     };
-    if ((clearedRow < this.ROWS - 1) && (this.dirMatrix[clearedRow + 1][c] % this.DIR_UP == 0)) {
-      this.dirMatrix[clearedRow + 1][c] /= this.DIR_UP;
-    };
-  };
-};
-
-//Returns all the squares remaining of a previously generated block
-Game.prototype.traceBlock = function(square, squaresList, colList) {
-  if (false) {
-
-  var block = [];
-  var squareStack = [square];
-  var curr, found, r, c;
-  while (squareStack.length > 0) {
-    curr = squareStack.pop();
-    r = curr[0];
-    c = curr[1];
-    
-    //Check Left
-    if (this.dirMatrix[r][c] % this.DIR_LEFT == 0 && c > 0 && this.matrix[r][c - 1] == this.matrix[r][c]) {
-      if (this.dirMatrix[r][c - 1] % this.DIR_RIGHT == 0) {
-        if (colList.indexOf(c - 1) == -1) return;
-        squareStack.push([r, c - 1]);
-      };  
-    };
-
-    //Check Up
-
-    //Check Right
-
-    //Check Down
-
-
-    found = squareList.indexOf(curr);
-    if (found != -1 && curr != square) squareList.splice(found, 1);
-    block.push(curr);
-  };
-  return block;
-
   };
 };
 
 Game.prototype.calculatePeripherals = function() {
   var numLinesCleared = numProperties(this.clearedRows);
-  this.score += 10 * Math.pow(numLinesCleared, 2) * this.level;
+  this.clearChain += numLinesCleared;
+  this.score += 10 * Math.pow(this.clearChain, 2) * this.level;
   if (this.level < 10 && this.score >= this.nextLevelScore) {
     ++this.level;
     this.calculateNextScore();
@@ -319,5 +392,5 @@ Game.prototype.calculatePeripherals = function() {
 };
 
 Game.prototype.calculateNextScore = function() {
-  this.nextLevelScore = Math.pow(this.level, 2) * 100 / 2;
+  this.nextLevelScore = Math.pow(this.level, 2) * 150;
 };

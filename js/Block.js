@@ -1,12 +1,13 @@
 /* 
  * Base class for all tetris blocks
  */
-function Block() {
+function Block(id) {
   this.y = 0;
   this.leftLocked = false;
   this.rightLocked = false;
   this.downLocked = false;
   this.colour = 0;
+  this.id = (typeof id === "undefined")? 0 : id;
  
   this.MATRIX_SIZE = 4;
   this.matrix = create2DArray(this.MATRIX_SIZE, this.MATRIX_SIZE);
@@ -101,8 +102,8 @@ Block.prototype.updateDistance = function() {
  * . x . . 
  * . x . . 
  */
-function LineBlock() {
-  Block.call(this);
+function LineBlock(id) {
+  Block.call(this, id);
 
   this.y = -4;
   this.colour = 1;
@@ -122,8 +123,8 @@ LineBlock.prototype.constructor = LineBlock;
  * . . . . 
  * . . . . 
  */
-function SquareBlock() {
-  Block.call(this);
+function SquareBlock(id) {
+  Block.call(this, id);
 
   this.y = -2;
   this.colour = 2;
@@ -146,8 +147,8 @@ SquareBlock.prototype.rotateLeft = function() { /* Do Nothing! No rotations for 
  * . x x . 
  * . . . . 
  */
-function LeftHookBlock() {
-  Block.call(this);
+function LeftHookBlock(id) {
+  Block.call(this, id);
 
   this.y = -3;
   this.colour = 3;
@@ -167,8 +168,8 @@ LeftHookBlock.prototype.constructor = LeftHookBlock;
  * . x x . 
  * . . . . 
  */
-function RightHookBlock() {
-  Block.call(this);
+function RightHookBlock(id) {
+  Block.call(this, id);
 
   this.y = -3;
   this.colour = 4;
@@ -188,8 +189,8 @@ RightHookBlock.prototype.constructor = RightHookBlock;
  * . x . . 
  * . . . . 
  */
-function ArrowBlock() {
-  Block.call(this);
+function ArrowBlock(id) {
+  Block.call(this, id);
 
   this.y = -3;
   this.colour = 5;
@@ -209,8 +210,8 @@ ArrowBlock.prototype.constructor = ArrowBlock;
  * . . x . 
  * . . . . 
  */
-function LeftBoltBlock() {
-  Block.call(this);
+function LeftBoltBlock(id) {
+  Block.call(this, id);
 
   this.y = -3;
   this.colour = 6;
@@ -230,8 +231,8 @@ LeftBoltBlock.prototype.constructor = LeftBoltBlock;
  * . x . . 
  * . . . . 
  */
-function RightBoltBlock() {
-  Block.call(this);
+function RightBoltBlock(id) {
+  Block.call(this, id);
 
   this.y = -3;
   this.colour = 7;
@@ -246,37 +247,37 @@ function RightBoltBlock() {
 RightBoltBlock.prototype = new Block();
 RightBoltBlock.prototype.constructor = RightBoltBlock;
 
-function getNewBlock(blockID) {
-  blockID = blockID || Math.floor(Math.random()*7 + 1);
+function getNewBlock(id, blockNum) {
+  blockNum = blockNum || Math.floor(Math.random()*7 + 1);
 
   var newblock = null;
-  switch(blockID) {
+  switch(blockNum) {
     case 1:
-      newblock = new LineBlock();
+      newblock = new LineBlock(id);
       break;
 
     case 2:
-      newblock = new SquareBlock();
+      newblock = new SquareBlock(id);
       break;
 
     case 3:
-      newblock = new LeftHookBlock();
+      newblock = new LeftHookBlock(id);
       break;
 
     case 4:
-      newblock = new RightHookBlock();
+      newblock = new RightHookBlock(id);
       break;
 
     case 5:
-      newblock = new ArrowBlock();
+      newblock = new ArrowBlock(id);
       break;
 
     case 6:
-      newblock = new LeftBoltBlock();
+      newblock = new LeftBoltBlock(id);
       break;
 
     case 7:
-      newblock = new RightBoltBlock();
+      newblock = new RightBoltBlock(id);
       break;                  
     
     default:

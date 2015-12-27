@@ -11,7 +11,7 @@ function create2DArray(rows, cols) {
 
 function setAll(array, length, value) {
   for (var i = 0; i < length; ++i) {
-    array[i] = 0;
+    array[i] = value;
   };
   return array;
 };

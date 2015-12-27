@@ -16,8 +16,11 @@ function CanvasFrame() {
   this.stopAnimation = 0;
 
   this.clearCount;
-  this.CLEAR_REPEAT = 7; //This needs to be an odd value to end with the last cycle through the loop clearing filled rows
+  this.CLEAR_REPEAT = 14;
+
   this.dropChainBlock;
+  this.chainTick;
+  this.CHAIN_SPEED = 0.05;
 
   this.coloursList = [
     "",
@@ -60,7 +63,7 @@ CanvasFrame.prototype.updateSizes = function() {
 
 CanvasFrame.prototype.updateSpeed = function() {
   //Update the rate of which blocks fall
-  this.gameSpeed = (parseFloat(this.game.level) + 3) * 0.01;
+  this.gameSpeed = (this.game.level + 3) * 0.01;
 };
 
 CanvasFrame.prototype.stopGame = function() {
@@ -69,7 +72,7 @@ CanvasFrame.prototype.stopGame = function() {
     if (confirm("Are you sure you want to stop the current game?")) {
       this.gameOver();
     } else {
-      this.drawLoop();
+      this.draw();
     };
   };
 };
@@ -79,11 +82,13 @@ CanvasFrame.prototype.newGame = function() {
   if (confirm("Start a new game?")) {
     this.game.init();
     this.clearAll();
+
     this.gameActive = true;
     this.dropChainBlock = false;
+    
     this.generateBlock();
   } else if (this.gameActive) {
-    this.drawLoop();
+    this.draw();
   };
 };
 
@@ -156,13 +161,15 @@ CanvasFrame.prototype.drawLoop = function() {
     this.game.currentBlock.rightLocked = this.game.checkRightLocked(this.game.x, this.game.y);
     this.deltaY = 0;
   };
-  if (this.clearCount == 0) {
+
+  if (this.clearCount == 0 && !this.dropChainBlock && !this.game.chainLoop) {
     this.clearCurrent();
     this.drawBlock();
   } else {
     this.clearAll();
     this.drawAll();
   };
+
   if (this.game.currentBlock.downLocked) {
     if (!this.game.gameOver) {
 
@@ -183,17 +190,22 @@ CanvasFrame.prototype.drawLoop = function() {
         this.game.dropFilledRows();
         ++this.clearCount;
         this.dropChainBlock = this.game.dropChainBlocks();
+        this.chainTick = 0;
         this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});
 
-      } else {
-        if (this.dropChainBlock) {
-          //Chain reaction, frames for dropping the free blocks
+      } else if (this.dropChainBlock) {
+        //Chain reaction, frames for dropping the free blocks
+        if (this.chainTick > 1) {
           this.dropChainBlock = this.game.dropChainBlocks();
-          this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});
-        } else {
-          //Time to generate new block
-          this.generateBlock();
+          if (!this.dropChainBlock) this.clearCount = 0;
+          this.deltaY = 0;
         };
+        this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});
+        this.chainTick += this.CHAIN_SPEED; 
+
+      } else {
+        //Time to generate new block
+        this.generateBlock();
       };
     } else {
       this.gameOver();
