@@ -10,6 +10,8 @@
 
     <!-- Custom Stylesheets and Scripts -->
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="common/css/common.css">
+
     <script type="text/javascript" src="js/Utilities.js"></script>
     <script type="text/javascript" src="js/Main.js"></script>
     <script type="text/javascript" src="js/Game.js"></script>
@@ -20,13 +22,15 @@
   </head>
 
   <body>
+    <div id="side-container"><a href="https://comraq.github.io"><button type="button" id="home-button">>> Visit my Homepage</button></a></div>
+
     <div class="tetris-container">
       <div class="white-screen"></div>
       <div class="title">My-Tetris</div>
       <div class="button-container">
-        <button id="new-game">New Game</button>
-        <button id="stop">Quit</button>
-        <button id="pause-resume">Pause/Resume</button>
+        <button class="tetris-button" id="new-game">New Game</button>
+        <button class="tetris-button" id="stop">Quit</button>
+        <button class="tetris-button" id="pause-resume">Pause/Resume</button>
       </div>
       <div class="peripheral-container">
         <div class="scoreboard"><p class="score-components" id="score-label">Score:</p><p class="score-components" id="score-field">&nbsp</p></div>
@@ -38,6 +42,8 @@
           </div>  
           <p class="level-components" id="level-field">&nbsp</p>
         </div>
+        <input id="gravity-check" type="checkbox" name="gravity" checked><label class="peripheral-check">Piece-wise Gravity</label>
+        <input id="level-check" type="checkbox" name="Level"><label class="peripheral-check">Fixed Level</label>
       </div>
       <div class="info-container">
         <h1 class="info-header">Controls<h1>
@@ -70,7 +76,13 @@
       <div class="preview-container"><div class="white-screen preview-screen"></div><div class="preview-title">Next</div><canvas class="preview-frame"></canvas></div>
     </div>
 
-
+    <!-- FOOTER -->
+    <div class="container-footer">
+      <footer>
+        <p class="footer-to-top"><a class="footer-item" href="#">Back to Top</a></p>
+        <p class="footer-author footer-item">Developed by &middot; <a class="footer-item" href="https://github.com/comraq"><img class="logo-icon" src="common/img/github-icon.gif"/>&nbspAdam Yin</a></p>
+      </footer>
+    </div>
 
   </body>
 

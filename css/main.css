@@ -22,7 +22,7 @@ body {
   width: 53%;
 
   font-family: verdana;
-  font-size: 40px;
+  font-size: 3vw;
   font-weight: bold;
   color: #7b7;
   text-shadow: 3px 3px 0px #fff;
@@ -34,7 +34,7 @@ body {
   top: 5%;
   left: 2%;
 
-  height: 90%;
+  height: 84%;
   width: 50%;
 
   border: 1px solid green;
@@ -76,6 +76,7 @@ body {
 
   text-align: center;
   font-weight: bold;
+  font-size: 1.4vw;
   color: #077;
 }
 
@@ -101,7 +102,9 @@ body {
   float: right;
 }
 
-button:hover { transform: scale(1.1); }
+.tetris-button { font-size: 1vw; }
+
+.tetris-button:hover { transform: scale(1.1); }
 
 .peripheral-container {
   position: absolute;
@@ -128,7 +131,7 @@ button:hover { transform: scale(1.1); }
 p.score-components {
   color: #844;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 1.55vw;
 }
 
 #score-label {
@@ -150,7 +153,7 @@ p.score-components {
 p.level-components {
   color: #373;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 1.5vw;
 }
 
 .level-button-container {
@@ -160,6 +163,8 @@ p.level-components {
 }
 
 .level-button {
+  max-height: 2vh;
+
   opacity: 0.3;
 }
 
@@ -167,6 +172,10 @@ p.level-components {
 
 #level-label {
   float: left;
+}
+
+.peripheral-check {
+  font-weight: bold;
 }
 
 .info-container {
@@ -186,13 +195,14 @@ p.level-components {
   left: 25%;
 
   color: #33a;
+  font-size: 3vw;
 }
 
 .info-body {
   position: relative;
 
   color: #66c;
-  font-size: 18px;
+  font-size: 1.5vw;
 }
 
 .info-col-1 {
@@ -201,4 +211,8 @@ p.level-components {
 
 .info-col-2 {
   float: right;
+}
+
+.peripheral-check {
+  font-size: 1vw;
 }

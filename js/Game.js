@@ -382,10 +382,11 @@ Game.prototype.findEntireBlock = function(id, foundRow, foundCol, topRow) {
 };
 
 Game.prototype.calculatePeripherals = function() {
+  var levelCheck = document.getElementById("level-check");
   var numLinesCleared = numProperties(this.clearedRows);
   this.clearChain += numLinesCleared;
   this.score += 10 * Math.pow(this.clearChain, 2) * this.level;
-  if (this.level < 10 && this.score >= this.nextLevelScore) {
+  if (!levelCheck.checked && this.level < 10 && this.score >= this.nextLevelScore) {
     ++this.level;
     this.calculateNextScore();
   };

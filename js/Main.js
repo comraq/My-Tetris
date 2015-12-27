@@ -2,7 +2,7 @@ var Main = function() {
   var frame = new CanvasFrame();
   frame.init();
 
-  $("button").click(function() {executeButtonAction(this, frame)});
+  $(".tetris-button").click(function() {executeButtonAction(this, frame)});
 
   $(".level-button").on({mouseenter: peripherals.markActive,
                          mouseleave: peripherals.markInactive,
@@ -105,6 +105,7 @@ var peripherals = {
         frame.game.calculateNextScore();
       };
     };
+    if (frame.gameActive) document.getElementById("level-check").checked = true;
   }
 };
 

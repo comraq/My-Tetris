@@ -1,5 +1,5 @@
 function CanvasFrame() {
-  this.deltaY = 0;
+  this.tick = 0;
   this.prevX = [];
   this.prevY = [];
 
@@ -62,6 +62,9 @@ CanvasFrame.prototype.updateSizes = function() {
     this.width = this.canvas.width;
     this.blockHeight = this.height / this.game.ROWS;
     this.blockWidth = this.width / this.game.COLS;
+
+    this.drawAll();
+    this.previewFrame.updateSizes(this);
 
     //Restore the drawing styles lost due to resizing
     if (typeof this.game.currentBlock !== "undefined") this.setColours();
@@ -181,22 +184,23 @@ CanvasFrame.prototype.rotateRight = function() {
 
 /* Call this method to enter drawLoop, ensuring proper initialization of fields */
 CanvasFrame.prototype.draw = function() {
-  this.deltaY = 0;
+  this.tick = 0;
   this.drawLoop();
 }
 
 /* The method that is looped for the necessary animation */
 CanvasFrame.prototype.drawLoop = function() {
   var frame = this;
+  var gravityCheck = document.getElementById("gravity-check");
   this.updateSizes();
   this.updateSpeed();
   this.updatePeripherals();
 
-  if (this.deltaY > 1) {
+  if (this.tick > 1) {
     this.game.moveDown();
     this.game.currentBlock.leftLocked = this.game.checkLeftLocked(this.game.x, this.game.y);
     this.game.currentBlock.rightLocked = this.game.checkRightLocked(this.game.x, this.game.y);
-    this.deltaY = 0;
+    this.tick = 0;
   };
 
   if (this.clearCount == 0 && !this.dropChainBlock && !this.game.chainLoop) {
@@ -226,7 +230,7 @@ CanvasFrame.prototype.drawLoop = function() {
         //Actually remove the cleared rows from game.matrix
         this.game.dropFilledRows();
         ++this.clearCount;
-        this.dropChainBlock = this.game.dropChainBlocks();
+        if (gravityCheck.checked) this.dropChainBlock = this.game.dropChainBlocks();
         this.chainTick = 0;
         this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});
 
@@ -235,7 +239,7 @@ CanvasFrame.prototype.drawLoop = function() {
         if (this.chainTick > 1) {
           this.dropChainBlock = this.game.dropChainBlocks();
           if (!this.dropChainBlock) this.clearCount = 0;
-          this.deltaY = 0;
+          this.tick = 0;
         };
         this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});
         this.chainTick += this.CHAIN_SPEED; 
@@ -249,7 +253,7 @@ CanvasFrame.prototype.drawLoop = function() {
     };
   } else {
     this.stopAnimation = requestAnimationFrame(function() {frame.drawLoop()});
-    this.deltaY += this.gameSpeed;
+    this.tick += this.gameSpeed;
   };
 };
 
@@ -340,7 +344,7 @@ PreviewFrame.prototype.init = function() {
   this.originY = 1;
 };
 
-PreviewFrame.prototype.updateSizes = function() {
+PreviewFrame.prototype.updateSizes = function(frame) {
   if (this.canvas.height != this.canvas.offsetHeight || this.canvas.width != this.canvas.offsetWidth) {
     this.canvas.height = this.canvas.offsetHeight;
     this.canvas.width = this.canvas.offsetWidth;
@@ -349,6 +353,9 @@ PreviewFrame.prototype.updateSizes = function() {
     this.width = this.canvas.width;
     this.blockHeight = this.height / this.BLOCK_SIZE;
     this.blockWidth = this.width / this.BLOCK_SIZE;
+
+    //Redraw the preview/next block lost due to resizing
+    if (typeof this.currentBlock !== "undefined") this.showNextBlock(frame);
   };
 };
 
