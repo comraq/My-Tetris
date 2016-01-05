@@ -80,8 +80,13 @@ function executeButtonAction(button, frame) {
       frame.pauseResumeGame();
       break;
     default:
-      alert("Button action not yet implemented");
+      //Nothing
   };
+};
+
+function showGameState(frame) {
+  $("#status-text").stop();
+  if (frame.gameState == frame.GameStateEnum.PLAYING) { $("#status-text").fadeTo(3000, 0); };
 };
 
 var peripherals = {
@@ -94,18 +99,21 @@ var peripherals = {
   },
 
   updateLevel: function(levelButton, frame) {
-    if ($(levelButton).is("#increase-level")) {
-      if(frame.game.level < 10) {
-        ++frame.game.level;
-        frame.game.calculateNextScore();
+    if (frame.gameState != frame.GameStateEnum.STOPPED) {
+      if ($(levelButton).is("#increase-level")) {
+        if(frame.game.level < 10) {
+          ++frame.game.level;
+          frame.game.calculateNextScore();
+        };
+      } else if ($(levelButton).is("#decrease-level")) {
+        if(frame.game.level > 1) {
+          --frame.game.level;
+          frame.game.calculateNextScore();
+        };
       };
-    } else if ($(levelButton).is("#decrease-level")) {
-      if(frame.game.level > 1) {
-        --frame.game.level;
-        frame.game.calculateNextScore();
-      };
+      document.getElementById("level-check").checked = true;
+      frame.updatePeripherals();
     };
-    if (frame.gameActive) document.getElementById("level-check").checked = true;
   }
 };
 

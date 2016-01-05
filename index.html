@@ -29,8 +29,8 @@
       <div class="title">My-Tetris</div>
       <div class="button-container">
         <button class="tetris-button" id="new-game">New Game</button>
-        <button class="tetris-button" id="stop">Quit</button>
-        <button class="tetris-button" id="pause-resume">Pause/Resume</button>
+        <button class="tetris-button" id="stop">Stop Game</button>
+        <button class="tetris-button" id="pause-resume"></button>
       </div>
       <div class="peripheral-container">
         <div class="scoreboard"><p class="score-components" id="score-label">Score:</p><p class="score-components" id="score-field">&nbsp</p></div>
@@ -42,8 +42,10 @@
           </div>  
           <p class="level-components" id="level-field">&nbsp</p>
         </div>
+        <input id="level-check" type="checkbox" name="Level"><label class="peripheral-check">Fixed Level</label><br>
         <input id="gravity-check" type="checkbox" name="gravity" checked><label class="peripheral-check">Piece-wise Gravity</label>
-        <input id="level-check" type="checkbox" name="Level"><label class="peripheral-check">Fixed Level</label>
+        <input id="custom-block-check" type="checkbox" name="custom-block" checked><label class="peripheral-check">Custom Blocks</label>
+
       </div>
       <div class="info-container">
         <h1 class="info-header">Controls<h1>
@@ -72,8 +74,16 @@
           Pause/Resume<br>
         </p>
       </div>
-      <div class="canvas-container"><div class="white-screen"></div><canvas class="tetris-frame"></canvas></div>
-      <div class="preview-container"><div class="white-screen preview-screen"></div><div class="preview-title">Next</div><canvas class="preview-frame"></canvas></div>
+      <div class="canvas-container">
+        <div class="white-screen"></div>
+        <p id="status-text"></p>
+        <canvas class="tetris-frame"></canvas>
+      </div>
+      <div class="preview-container">
+        <div class="white-screen preview-screen"></div>
+        <div class="preview-title">Next</div>
+        <canvas class="preview-frame"></canvas>
+      </div>
     </div>
 
     <!-- FOOTER -->
