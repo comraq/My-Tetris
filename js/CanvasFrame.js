@@ -154,7 +154,7 @@ CanvasFrame.prototype.updateGameState = function(gameState) {
     };
     this.gameState = gameState;
     statusText.innerHTML = gameState;
-    statusText.style.opacity = 0.7;
+    //statusText.style.opacity = 0.7;
     showGameState(this);
   };
 };

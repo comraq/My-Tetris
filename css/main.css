@@ -50,12 +50,19 @@ body {
   opacity: 0.4;
 }
 
-#status-text {
+.status-container {
   z-index: 1;
   position: absolute;
-  top: 40%;
+  top: 35%;
 
-  height: auto;
+  width: 100%;
+
+  /*border: 1px dashed #000;*/
+}
+
+.game-text {
+  margin: 0;
+
   width: 100%;
 
   color: #fff;
@@ -63,6 +70,13 @@ body {
   font-size: 3vw;
   font-weight: bold;
   text-shadow: 0px 0px 10px #000;
+
+  opacity: 0.7;
+
+  /*border: 1px dashed #0f0;*/
+}
+
+#status-text {
 }
 
 .tetris-frame {
@@ -93,7 +107,7 @@ body {
 
   text-align: center;
   font-weight: bold;
-  font-size: 1.4vw;
+  font-size: 1.1vw;
   color: #077;
 }
 
@@ -194,7 +208,7 @@ p.level-components {
 
 .info-container {
   position: absolute;
-  top: 30%;
+  bottom: 8%;
   right: 5%;
 
   min-width: 35%;
@@ -209,14 +223,14 @@ p.level-components {
   left: 25%;
 
   color: #33a;
-  font-size: 3vw;
+  font-size: 2.5vw;
 }
 
 .info-body {
   position: relative;
 
   color: #66c;
-  font-size: 1.5vw;
+  font-size: 1.4vw;
 }
 
 .info-col-1 {
