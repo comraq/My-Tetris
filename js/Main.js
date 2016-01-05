@@ -84,9 +84,13 @@ function executeButtonAction(button, frame) {
   };
 };
 
-function showGameState(frame) {
-  $("#status-text").stop();
-  if (frame.gameState == frame.GameStateEnum.PLAYING) { $("#status-text").fadeTo(3000, 0); };
+function showGameState(obj) {
+  $(".game-text").fadeTo(0, 0.7);
+
+  if (obj instanceof CanvasFrame) {
+    $("#status-text").stop();
+    if (obj.gameState == obj.GameStateEnum.PLAYING) { $("#status-text").fadeTo(3000, 0); };
+  }
 };
 
 var peripherals = {

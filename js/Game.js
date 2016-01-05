@@ -25,6 +25,12 @@ function Game() {
   this.chainLoop;
   this.gameOver;
   this.verbose = false;
+
+  this.ClearTextEnum = {
+    2 : "Double!!",
+    3 : "Triple!!!",
+    4 : "Tetris!!!!"
+  };
 };
 
 Game.prototype.init = function() {
@@ -388,6 +394,10 @@ Game.prototype.findEntireBlock = function(id, foundRow, foundCol, topRow) {
 Game.prototype.calculatePeripherals = function() {
   var levelCheck = document.getElementById("level-check");
   var numLinesCleared = numProperties(this.clearedRows);
+
+  //document.getElementById("clear-text").innerHTML = this.ClearTextEnum[numLinesCleared];
+  //showGameState(this);
+
   this.clearChain += numLinesCleared;
   this.score += 10 * Math.pow(this.clearChain, 2) * this.level;
   if (!levelCheck.checked && this.level < 10 && this.score >= this.nextLevelScore) {
@@ -402,6 +412,8 @@ Game.prototype.calculateNextScore = function() {
 
 Game.prototype.getNewBlock = function(id) {
   var blockNum;
+
+  //Decrease the probability of generating custom blocks to control the difficulty of the game
   if (this.customBlocks && (Math.floor(Math.random()*3) == 0)) {
     blockNum = Math.floor(Math.random()*(this.CUSTOM_NUM_BLOCKS - this.TRADITIONAL_NUM_BLOCKS) + (this.CUSTOM_NUM_BLOCKS - this.TRADITIONAL_NUM_BLOCKS) + 1);
   } else {
