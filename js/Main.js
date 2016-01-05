@@ -82,6 +82,9 @@ function executeButtonAction(button, frame) {
     default:
       //Nothing
   };
+};
+
+function showGameState(frame) {
   $("#status-text").stop();
   if (frame.gameState == frame.GameStateEnum.PLAYING) { $("#status-text").fadeTo(3000, 0); };
 };

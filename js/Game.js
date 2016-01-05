@@ -13,6 +13,10 @@ function Game() {
   this.idList;
   this.idCount;
 
+  this.TRADITIONAL_NUM_BLOCKS = 7;
+  this.CUSTOM_NUM_BLOCKS = 14;
+  this.customBlocks = true;
+
   this.clearedRows;
   this.emptyRow;
   this.chainBlocks;
@@ -50,7 +54,7 @@ Game.prototype.createIdList = function(length) {
 
 Game.prototype.generateBlock = function(block) {
   if (typeof block === "undefined") {
-    this.currentBlock = getNewBlock(this.idList.pop());
+    this.currentBlock = this.getNewBlock(this.idList.pop());
   } else {
     this.currentBlock = block;
   };
@@ -394,4 +398,76 @@ Game.prototype.calculatePeripherals = function() {
 
 Game.prototype.calculateNextScore = function() {
   this.nextLevelScore = Math.pow(this.level, 2) * 150;
+};
+
+Game.prototype.getNewBlock = function(id) {
+  var blockNum;
+  if (this.customBlocks && (Math.floor(Math.random()*3) == 0)) {
+    blockNum = Math.floor(Math.random()*(this.CUSTOM_NUM_BLOCKS - this.TRADITIONAL_NUM_BLOCKS) + (this.CUSTOM_NUM_BLOCKS - this.TRADITIONAL_NUM_BLOCKS) + 1);
+  } else {
+    blockNum = Math.floor(Math.random()*this.TRADITIONAL_NUM_BLOCKS + 1);
+  };
+
+  var newblock = null;
+  switch(blockNum) {
+    case 1:
+      newblock = new LineBlock(id);
+      break;
+
+    case 2:
+      newblock = new SquareBlock(id);
+      break;
+
+    case 3:
+      newblock = new LeftHookBlock(id);
+      break;
+
+    case 4:
+      newblock = new RightHookBlock(id);
+      break;
+
+    case 5:
+      newblock = new ArrowBlock(id);
+      break;
+
+    case 6:
+      newblock = new LeftBoltBlock(id);
+      break;
+
+    case 7:
+      newblock = new RightBoltBlock(id);
+      break;
+
+    case 8:
+      newblock = new CrossBlock(id);
+      break;
+
+    case 9:
+      newblock = new LargeLeftBoltBlock(id);
+      break;
+
+    case 10:
+      newblock = new LargeRightBoltBlock(id);
+      break;
+
+    case 11:
+      newblock = new LeftHookArrowBlock(id);
+      break;
+
+    case 12:
+      newblock = new RightHookArrowBlock(id);
+      break;
+
+    case 13:
+      newblock = new LeftTonfaBlock(id);
+      break;
+
+    case 14:
+      newblock = new RightTonfaBlock(id);
+      break;
+
+    default:
+      return null;
+  };
+  return newblock;
 };

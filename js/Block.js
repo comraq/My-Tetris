@@ -103,7 +103,7 @@ Block.prototype.updateDistance = function() {
  * . . . . 
  */
 function LineBlock(id) {
-  //Block.call(this, id);
+  Block.call(this, id);
 
   this.y = -2;
   this.colour = 1;
@@ -124,7 +124,7 @@ LineBlock.prototype.constructor = LineBlock;
  * . . . . 
  */
 function SquareBlock(id) {
-  //Block.call(this, id);
+  Block.call(this, id);
 
   this.y = -3;
   this.colour = 2;
@@ -148,7 +148,7 @@ SquareBlock.prototype.rotateLeft = function() { /* Do Nothing! No rotations for 
  * . . . . 
  */
 function LeftHookBlock(id) {
-  //Block.call(this, id);
+  Block.call(this, id);
 
   this.y = -3;
   this.colour = 3;
@@ -169,7 +169,7 @@ LeftHookBlock.prototype.constructor = LeftHookBlock;
  * . . . . 
  */
 function RightHookBlock(id) {
-  //Block.call(this, id);
+  Block.call(this, id);
 
   this.y = -3;
   this.colour = 4;
@@ -190,7 +190,7 @@ RightHookBlock.prototype.constructor = RightHookBlock;
  * . . . . 
  */
 function ArrowBlock(id) {
-  //Block.call(this, id);
+  Block.call(this, id);
 
   this.y = -3;
   this.colour = 5;
@@ -211,7 +211,7 @@ ArrowBlock.prototype.constructor = ArrowBlock;
  * . . . . 
  */
 function LeftBoltBlock(id) {
-  //Block.call(this, id);
+  Block.call(this, id);
 
   this.y = -3;
   this.colour = 6;
@@ -232,7 +232,7 @@ LeftBoltBlock.prototype.constructor = LeftBoltBlock;
  * . . . . 
  */
 function RightBoltBlock(id) {
-  //Block.call(this, id);
+  Block.call(this, id);
 
   this.y = -3;
   this.colour = 7;
@@ -247,41 +247,159 @@ function RightBoltBlock(id) {
 RightBoltBlock.prototype = new Block();
 RightBoltBlock.prototype.constructor = RightBoltBlock;
 
-function getNewBlock(id, blockNum) {
-  blockNum = blockNum || Math.floor(Math.random()*7 + 1);
+/* . x . .
+ * x x x .
+ * . x . .
+ * . . . .
+ */
+function CrossBlock(id) {
+  Block.call(this, id);
 
-  var newblock = null;
-  switch(blockNum) {
-    case 1:
-      newblock = new LineBlock(id);
-      break;
+  this.y = -3;
+  this.colour = 8;
 
-    case 2:
-      newblock = new SquareBlock(id);
-      break;
-
-    case 3:
-      newblock = new LeftHookBlock(id);
-      break;
-
-    case 4:
-      newblock = new RightHookBlock(id);
-      break;
-
-    case 5:
-      newblock = new ArrowBlock(id);
-      break;
-
-    case 6:
-      newblock = new LeftBoltBlock(id);
-      break;
-
-    case 7:
-      newblock = new RightBoltBlock(id);
-      break;                  
-    
-    default:
-      return null;  
-  };
-  return newblock;
+  this.matrix[0][1] = this.colour;
+  this.matrix[1][0] = this.colour;
+  this.matrix[1][1] = this.colour;
+  this.matrix[1][2] = this.colour;
+  this.matrix[2][1] = this.colour;
+  this.updateDistance();
 };
+
+CrossBlock.prototype = new Block();
+CrossBlock.prototype.constructor = CrossBlock;
+
+CrossBlock.prototype.rotateRight = function() { /* Do Nothing! No rotations for CrossBlock */ };
+CrossBlock.prototype.rotateLeft = function() { /* Do Nothing! No rotations for CrossBlock */ };
+
+/* x . . .
+ * x x x .
+ * . . x .
+ * . . . .
+ */
+function LargeLeftBoltBlock(id) {
+  Block.call(this, id);
+
+  this.y = -3;
+  this.colour = 9;
+
+  this.matrix[0][0] = this.colour;
+  this.matrix[1][0] = this.colour;
+  this.matrix[1][1] = this.colour;
+  this.matrix[1][2] = this.colour;
+  this.matrix[2][2] = this.colour;
+  this.updateDistance();
+};
+
+LargeLeftBoltBlock.prototype = new Block();
+LargeLeftBoltBlock.prototype.constructor = LargeLeftBoltBlock;
+
+/* . . . x
+ * . x x x
+ * . x . .
+ * . . . .
+ */
+function LargeRightBoltBlock(id) {
+  Block.call(this, id);
+
+  this.y = -3;
+  this.colour = 10;
+
+  this.matrix[0][3] = this.colour;
+  this.matrix[1][1] = this.colour;
+  this.matrix[1][2] = this.colour;
+  this.matrix[1][3] = this.colour;
+  this.matrix[2][1] = this.colour;
+  this.updateDistance();
+};
+
+LargeRightBoltBlock.prototype = new Block();
+LargeRightBoltBlock.prototype.constructor = LargeRightBoltBlock;
+
+/* . . x .
+ * . . x x
+ * . x x .
+ * . . . .
+ */
+function LeftHookArrowBlock(id) {
+  Block.call(this, id);
+
+  this.y = -3;
+  this.colour = 11;
+
+  this.matrix[0][2] = this.colour;
+  this.matrix[1][2] = this.colour;
+  this.matrix[1][3] = this.colour;
+  this.matrix[2][1] = this.colour;
+  this.matrix[2][2] = this.colour;
+  this.updateDistance();
+};
+
+LeftHookArrowBlock.prototype = new Block();
+LeftHookArrowBlock.prototype.constructor = LeftHookArrowBlock;
+
+/* . x . .
+ * x x . .
+ * . x x .
+ * . . . .
+ */
+function RightHookArrowBlock(id) {
+  Block.call(this, id);
+
+  this.y = -3;
+  this.colour = 12;
+
+  this.matrix[0][1] = this.colour;
+  this.matrix[1][0] = this.colour;
+  this.matrix[1][1] = this.colour;
+  this.matrix[2][1] = this.colour;
+  this.matrix[2][2] = this.colour;
+  this.updateDistance();
+};
+
+RightHookArrowBlock.prototype = new Block();
+RightHookArrowBlock.prototype.constructor = RightHookArrowBlock;
+
+/* . . . .
+ * x x x x
+ * . x . .
+ * . . . .
+ */
+function LeftTonfaBlock(id) {
+  Block.call(this, id);
+
+  this.y = -3;
+  this.colour = 13;
+
+  this.matrix[1][0] = this.colour;
+  this.matrix[1][1] = this.colour;
+  this.matrix[1][2] = this.colour;
+  this.matrix[1][3] = this.colour;
+  this.matrix[2][1] = this.colour;
+  this.updateDistance();
+};
+
+LeftTonfaBlock.prototype = new Block();
+LeftTonfaBlock.prototype.constructor = LeftTonfaBlock;
+
+/* . . . .
+ * x x x x
+ * . . x .
+ * . . . .
+ */
+function RightTonfaBlock(id) {
+  Block.call(this, id);
+
+  this.y = -3;
+  this.colour = 14;
+
+  this.matrix[1][0] = this.colour;
+  this.matrix[1][1] = this.colour;
+  this.matrix[1][2] = this.colour;
+  this.matrix[1][3] = this.colour;
+  this.matrix[2][2] = this.colour;
+  this.updateDistance();
+};
+
+RightTonfaBlock.prototype = new Block();
+RightTonfaBlock.prototype.constructor = RightTonfaBlock;

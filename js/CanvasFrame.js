@@ -38,7 +38,14 @@ function CanvasFrame() {
     "#0000ff", //RightHookBlock
     "#89a02c", //ArrowBlock
     "#a0892c", //LeftBoltBlock
-    "#ff00ff"  //RightBoltBlock
+    "#ffbbbb", //RightBoltBlock
+    "#2caa87", //CrossBlock
+    "#2d87aa", //LargeLeftBoltBlock
+    "#ffa833", //LargeRightBoltBlock
+    "#c0c0c0", //LeftHookArrowBlock
+    "#ff5599", //RightHookArrowBlock
+    "#c82dab", //LeftTonfaBlock
+    "#cccc00"  //RightTonfaBlock
   ];
 };
 
@@ -148,6 +155,7 @@ CanvasFrame.prototype.updateGameState = function(gameState) {
     this.gameState = gameState;
     statusText.innerHTML = gameState;
     statusText.style.opacity = 0.7;
+    showGameState(this);
   };
 };
 
@@ -169,6 +177,7 @@ CanvasFrame.prototype.setColours = function(colour) {
 };
 
 CanvasFrame.prototype.previewNext = function() {
+  this.game.customBlocks = document.getElementById("custom-block-check").checked;
   this.game.generateBlock();
   this.previewFrame.currentBlock = this.game.currentBlock;
   this.previewFrame.showNextBlock(this);
