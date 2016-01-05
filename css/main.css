@@ -50,6 +50,20 @@ body {
   opacity: 0.4;
 }
 
+#status-text {
+  position: absolute;
+  top: 40%;
+
+  height: auto;
+  width: 100%;
+
+  color: #fff;
+  text-align: center;
+  font-size: 3vw;
+  font-weight: bold;
+  text-shadow: 0px 0px 10px #000;
+}
+
 .tetris-frame {
   height: 100%;
   width: 100%;
@@ -104,7 +118,7 @@ body {
 
 .tetris-button { font-size: 1vw; }
 
-.tetris-button:hover { transform: scale(1.1); }
+.tetris-button:hover:enabled { transform: scale(1.1); }
 
 .peripheral-container {
   position: absolute;
@@ -158,17 +172,16 @@ p.level-components {
 
 .level-button-container {
   position: absolute;
-  top: 15%;
   right: 0;
+
+  height: 100%;
 }
 
-.level-button {
-  max-height: 2vh;
-
-  opacity: 0.3;
-}
+.level-button { opacity: 0.3; }
 
 .level-button:hover { transform: scale(1.5); }
+
+#decrease-level { position: absolute; bottom: 0; }
 
 #level-label {
   float: left;

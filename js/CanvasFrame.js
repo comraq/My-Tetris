@@ -14,9 +14,14 @@ function CanvasFrame() {
 
   this.game;
   this.gameSpeed;
-  this.gameActive;
-  this.gamePaused;
+  this.gameState;
   this.stopAnimation = 0;
+
+  this.GameStateEnum = {
+    PLAYING : "- Game Active! -",
+    STOPPED : "- Game Stopped -",
+    PAUSED : "- Game Paused -"
+  };
 
   this.clearCount;
   this.CLEAR_REPEAT = 14;
@@ -42,8 +47,7 @@ CanvasFrame.prototype.init = function() {
   this.context = this.canvas.getContext("2d");
   this.game = new Game();
   this.game.init();
-  this.gameActive = false;
-  this.gamePaused = false;
+  this.updateGameState(this.GameStateEnum.STOPPED);
 
   this.previewFrame = new PreviewFrame();
   this.previewFrame.init();
@@ -77,11 +81,11 @@ CanvasFrame.prototype.updateSpeed = function() {
 };
 
 CanvasFrame.prototype.stopGame = function() {
-  if (this.gameActive) {
+  if (this.gameState != this.GameStateEnum.STOPPED) {
     cancelAnimationFrame(this.stopAnimation);
     if (confirm("Are you sure you want to quit the current game?")) {
       this.gameOver();
-    } else {
+    } else if (this.gameState == this.GameStateEnum.PLAYING) {
       this.draw();
     };
   };
@@ -93,38 +97,58 @@ CanvasFrame.prototype.newGame = function() {
     this.game.init();
     this.clearAll();
 
-    this.gameActive = true;
-    this.gamePaused = false;
+    this.updateGameState(this.GameStateEnum.PLAYING);
     this.dropChainBlock = false;
-    document.getElementById("pause-resume").innerHTML = "Pause";
     
     this.previewNext();
     this.generateBlock();
-  } else if (this.gameActive) {
+  } else if (this.gameState == this.GameStateEnum.PLAYING) {
     this.draw();
   };
 };
 
 CanvasFrame.prototype.pauseResumeGame = function() {
-  if (this.gameActive) {
-    var button = document.getElementById("pause-resume");
-    if (!this.gamePaused) {
-      cancelAnimationFrame(this.stopAnimation);
-      this.gamePaused = true;
-      button.innerHTML = "Resume";
-    } else {
-      this.gamePaused = false;
-      button.innerHTML = "Pause";
-      this.draw();
-    };
+  if (this.gameState == this.GameStateEnum.PLAYING) {
+    cancelAnimationFrame(this.stopAnimation);
+    this.updateGameState(this.GameStateEnum.PAUSED);
+  } else if (this.gameState == this.GameStateEnum.PAUSED) {
+    this.updateGameState(this.GameStateEnum.PLAYING);
+    this.draw();
   };
 };
 
 CanvasFrame.prototype.gameOver = function() {
   alert("Game Over! Your current score is: " + this.game.score);
-  this.gameActive = false;
-  this.gamePaused = false;
-  document.getElementById("pause-resume").innerHTML = "Pause/Resume";
+  this.updateGameState(this.GameStateEnum.STOPPED);
+};
+
+CanvasFrame.prototype.updateGameState = function(gameState) {
+  if (typeof gameState !== "undefined") {
+    var buttonStop = document.getElementById("stop");
+    var buttonPause = document.getElementById("pause-resume");
+    var statusText = document.getElementById("status-text");
+    switch(gameState) {
+      case this.GameStateEnum.PLAYING:
+        buttonPause.innerHTML = "Pause";
+        buttonPause.disabled = false;
+        buttonStop.disabled = false;
+        break;
+      case this.GameStateEnum.PAUSED:
+        buttonPause.innerHTML = "Resume";
+        buttonPause.disabled = false;
+        break;
+      case this.GameStateEnum.STOPPED:
+        buttonPause.innerHTML = "Pause/Resume";
+        buttonPause.disabled = true;
+        buttonStop.disabled = true;
+        break;
+      default:
+        //Nothing
+    };
+    this.gameState = gameState;
+    statusText.innerHTML = gameState;
+    statusText.style.opacity = 0.7;
+  };
 };
 
 CanvasFrame.prototype.generateBlock = function() {
@@ -153,19 +177,19 @@ CanvasFrame.prototype.previewNext = function() {
 /* Methods for controlling the current active tetris block */
 
 CanvasFrame.prototype.moveLeft = function() {
-  if (!this.gamePaused) this.game.moveLeft();
+  if (this.gameState == this.GameStateEnum.PLAYING) this.game.moveLeft();
 };
 
 CanvasFrame.prototype.moveRight = function() {
-  if (!this.gamePaused) this.game.moveRight();
+  if (this.gameState == this.GameStateEnum.PLAYING) this.game.moveRight();
 };
 
 CanvasFrame.prototype.moveDown = function() {
-  if (!this.gamePaused) this.game.moveDown();
+  if (this.gameState == this.GameStateEnum.PLAYING) this.game.moveDown();
 };
 
 CanvasFrame.prototype.instantDrop = function() {
-  if (!this.gamePaused) {
+  if (this.gameState == this.GameStateEnum.PLAYING) {
     cancelAnimationFrame(this.stopAnimation);
     this.game.instantDrop();
     this.draw();
@@ -173,11 +197,11 @@ CanvasFrame.prototype.instantDrop = function() {
 };
 
 CanvasFrame.prototype.rotateLeft = function() {
-  if (!this.gamePaused) this.game.rotateLeft();
+  if (this.gameState == this.GameStateEnum.PLAYING) this.game.rotateLeft();
 };
 
 CanvasFrame.prototype.rotateRight = function() {
-  if (!this.gamePaused) this.game.rotateRight();
+  if (this.gameState == this.GameStateEnum.PLAYING) this.game.rotateRight();
 };
 
 /* Methods for drawing and clearing the canvas */

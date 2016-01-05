@@ -103,7 +103,7 @@ Block.prototype.updateDistance = function() {
  * . . . . 
  */
 function LineBlock(id) {
-  Block.call(this, id);
+  //Block.call(this, id);
 
   this.y = -2;
   this.colour = 1;
@@ -124,7 +124,7 @@ LineBlock.prototype.constructor = LineBlock;
  * . . . . 
  */
 function SquareBlock(id) {
-  Block.call(this, id);
+  //Block.call(this, id);
 
   this.y = -3;
   this.colour = 2;
@@ -148,7 +148,7 @@ SquareBlock.prototype.rotateLeft = function() { /* Do Nothing! No rotations for 
  * . . . . 
  */
 function LeftHookBlock(id) {
-  Block.call(this, id);
+  //Block.call(this, id);
 
   this.y = -3;
   this.colour = 3;
@@ -169,7 +169,7 @@ LeftHookBlock.prototype.constructor = LeftHookBlock;
  * . . . . 
  */
 function RightHookBlock(id) {
-  Block.call(this, id);
+  //Block.call(this, id);
 
   this.y = -3;
   this.colour = 4;
@@ -190,7 +190,7 @@ RightHookBlock.prototype.constructor = RightHookBlock;
  * . . . . 
  */
 function ArrowBlock(id) {
-  Block.call(this, id);
+  //Block.call(this, id);
 
   this.y = -3;
   this.colour = 5;
@@ -211,7 +211,7 @@ ArrowBlock.prototype.constructor = ArrowBlock;
  * . . . . 
  */
 function LeftBoltBlock(id) {
-  Block.call(this, id);
+  //Block.call(this, id);
 
   this.y = -3;
   this.colour = 6;
@@ -232,7 +232,7 @@ LeftBoltBlock.prototype.constructor = LeftBoltBlock;
  * . . . . 
  */
 function RightBoltBlock(id) {
-  Block.call(this, id);
+  //Block.call(this, id);
 
   this.y = -3;
   this.colour = 7;
