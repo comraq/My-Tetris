@@ -56,11 +56,9 @@ body {
   top: 35%;
 
   width: 100%;
-
-  /*border: 1px dashed #000;*/
 }
 
-.game-text {
+.status-text {
   margin: 0;
 
   width: 100%;
@@ -72,8 +70,6 @@ body {
   text-shadow: 0px 0px 10px #000;
 
   opacity: 0.7;
-
-  /*border: 1px dashed #0f0;*/
 }
 
 #status-text {
@@ -208,7 +204,7 @@ p.level-components {
 
 .info-container {
   position: absolute;
-  bottom: 8%;
+  bottom: 12%;
   right: 5%;
 
   min-width: 35%;
@@ -243,4 +239,31 @@ p.level-components {
 
 .peripheral-check {
   font-size: 1vw;
+}
+
+.rainbow {
+  -webkit-animation-name: rainbow; /* Chrome, Safari, Opera */
+  -webkit-animation-duration: 2s; /* Chrome, Safari, Opera */
+  -webkit-animation-iteration-count: infinite;
+  animation-name: rainbow;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes rainbow {
+    0%   { color: #ff3200; border-color: #ff3200; }
+    25%  { color: #ffcc00; border-color: #ffcc00; }
+    50%  { color: #4747d1; border-color: #4747d1; }
+    75%  { color: #ccff33; border-color: #ccff33; }
+    100% { color: #ff3200; border-color: #ff3200; }
+}
+
+/* Standard syntax */
+@keyframes rainbow {
+    0%   { color: #ff3200; border-color: #ff3200; }
+    25%  { color: #ffcc00; border-color: #ffcc00; }
+    50%  { color: #4747d1; border-color: #4747d1; }
+    75%  { color: #ccff33; border-color: #ccff33; }
+    100% { color: #ff3200; border-color: #ff3200; }
 }

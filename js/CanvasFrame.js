@@ -133,7 +133,7 @@ CanvasFrame.prototype.updateGameState = function(gameState) {
   if (typeof gameState !== "undefined") {
     var buttonStop = document.getElementById("stop");
     var buttonPause = document.getElementById("pause-resume");
-    var statusText = document.getElementById("status-text");
+    var gameStateText = document.getElementById("game-state-text");
     switch(gameState) {
       case this.GameStateEnum.PLAYING:
         buttonPause.innerHTML = "Pause";
@@ -153,9 +153,9 @@ CanvasFrame.prototype.updateGameState = function(gameState) {
         //Nothing
     };
     this.gameState = gameState;
-    statusText.innerHTML = gameState;
+    gameStateText.innerHTML = gameState;
     //statusText.style.opacity = 0.7;
-    showGameState(this);
+    showGameState(this, "game-state-text");
   };
 };
 

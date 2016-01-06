@@ -84,13 +84,21 @@ function executeButtonAction(button, frame) {
   };
 };
 
-function showGameState(obj) {
-  $(".game-text").fadeTo(0, 0.7);
-
-  if (obj instanceof CanvasFrame) {
-    $("#status-text").stop();
-    if (obj.gameState == obj.GameStateEnum.PLAYING) { $("#status-text").fadeTo(3000, 0); };
-  }
+function showGameState(obj, id) {
+  var $text = $("#" + id);
+  $text.fadeTo(0, 0.7);
+  $text.stop();
+  if ((obj instanceof CanvasFrame) && (obj.gameState == obj.GameStateEnum.PLAYING)) {
+    $text.fadeTo(3000, 0)
+  } else if (obj instanceof Game) {
+    $text.removeClass("rainbow");
+    if ($text.text() == obj.ClearTextEnum[4]) {
+      $text.addClass("rainbow");
+      $text.fadeTo(3000, 0);
+    } else {
+      $text.fadeTo(2000, 0);
+    };
+  };
 };
 
 var peripherals = {

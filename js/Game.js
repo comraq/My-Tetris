@@ -26,11 +26,18 @@ function Game() {
   this.gameOver;
   this.verbose = false;
 
+  this.chainCount;
   this.ClearTextEnum = {
     2 : "Double!!",
     3 : "Triple!!!",
     4 : "Tetris!!!!"
   };
+  this.TextColorList = [
+    "#00ff00", //green
+    "#0066ff", //blue
+    "#ff9900", //orange
+    "#ffff00"  //yellow
+  ]
 };
 
 Game.prototype.init = function() {
@@ -68,6 +75,7 @@ Game.prototype.generateBlock = function(block) {
   this.y = this.currentBlock.y;
   this.chainLoop = false;
   this.clearChain = 0;
+  this.chainCount = 0;
 };
 
 Game.prototype.addBlockToMatrix = function(row, col) {
@@ -394,11 +402,22 @@ Game.prototype.findEntireBlock = function(id, foundRow, foundCol, topRow) {
 Game.prototype.calculatePeripherals = function() {
   var levelCheck = document.getElementById("level-check");
   var numLinesCleared = numProperties(this.clearedRows);
-
-  //document.getElementById("clear-text").innerHTML = this.ClearTextEnum[numLinesCleared];
-  //showGameState(this);
-
   this.clearChain += numLinesCleared;
+  ++this.chainCount;
+
+  if (numLinesCleared > 1) {
+    var clearText = document.getElementById("clear-text");
+    clearText.innerHTML = this.ClearTextEnum[numLinesCleared];
+    clearText.style.color = this.TextColorList[Math.floor(Math.random()*this.TextColorList.length)];
+    showGameState(this, "clear-text");
+  };
+  if (this.chainCount > 1) {
+    var chainText = document.getElementById("chain-text");
+    chainText.innerHTML = this.chainCount + "x Chain!";
+    chainText.style.color = this.TextColorList[this.chainCount % this.TextColorList.length];
+    showGameState(this, "chain-text");
+  }
+
   this.score += 10 * Math.pow(this.clearChain, 2) * this.level;
   if (!levelCheck.checked && this.level < 10 && this.score >= this.nextLevelScore) {
     ++this.level;
@@ -414,7 +433,7 @@ Game.prototype.getNewBlock = function(id) {
   var blockNum;
 
   //Decrease the probability of generating custom blocks to control the difficulty of the game
-  if (this.customBlocks && (Math.floor(Math.random()*3) == 0)) {
+  if (this.customBlocks && (Math.floor(Math.random()*4) == 0)) {
     blockNum = Math.floor(Math.random()*(this.CUSTOM_NUM_BLOCKS - this.TRADITIONAL_NUM_BLOCKS) + (this.CUSTOM_NUM_BLOCKS - this.TRADITIONAL_NUM_BLOCKS) + 1);
   } else {
     blockNum = Math.floor(Math.random()*this.TRADITIONAL_NUM_BLOCKS + 1);
