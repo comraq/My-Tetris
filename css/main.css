@@ -72,9 +72,6 @@ body {
   opacity: 0.7;
 }
 
-#status-text {
-}
-
 .tetris-frame {
   position: relative;
 
@@ -82,24 +79,30 @@ body {
   width: 100%;
 }
 
-.preview-container {
+.peripheral-side-container {
   position: absolute;
   top: 5%;
   left: 52%;
 
-  height: 12%;
+  height: 24%;
   width: 12%;
+}
+
+.peripheral-side-item {
+  position: relative;
+
+  height: 50%;
+  width: 100%;
 
   border: 1px solid green;
 }
 
-.preview-title {
+.peripheral-side-title {
   position: absolute;
   height: 20%;
   width: 100%;
 
   border-bottom: 1px solid #60f;
-  background-color: #0f0;
 
   text-align: center;
   font-weight: bold;
@@ -107,15 +110,21 @@ body {
   color: #077;
 }
 
-.preview-screen {
+.preview-title { background-color: #0f0; }
+
+.hold-title { background-color: #ff0; }
+
+.peripheral-side-screen {
   top: 20%;
 
   height: 80%;
-
-  background-color: #cff;
 }
 
-.preview-frame {
+.preview-screen { background-color: #cff; }
+
+.hold-screen { background-color: #ffc; }
+
+.peripheral-side-frame {
   position: absolute;
   top: 20%;
   
