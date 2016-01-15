@@ -16,6 +16,11 @@ var Main = function() {
 function parseInput(event, frame) {
   var key = event.keyCode;
   switch(key) {
+    case 16: //Shift
+      event.preventDefault();
+      frame.holdBlock();
+      break;
+
     case 32: //Spacebar
       event.preventDefault();
       frame.pauseResumeGame();

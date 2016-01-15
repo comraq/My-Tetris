@@ -11,6 +11,7 @@ function CanvasFrame() {
   this.blockWidth;
 
   this.previewFrame;
+  this.holdFrame;
 
   this.game;
   this.gameSpeed;
@@ -57,7 +58,10 @@ CanvasFrame.prototype.init = function() {
   this.updateGameState(this.GameStateEnum.STOPPED);
 
   this.previewFrame = new PreviewFrame();
-  this.previewFrame.init();
+  this.previewFrame.init(this);
+
+  this.holdFrame = new HoldFrame();
+  this.holdFrame.init(this);
 
   //Manually scaling up the canvas element size by the CSS transformed sizes
   this.updateSizes();
@@ -75,7 +79,8 @@ CanvasFrame.prototype.updateSizes = function() {
     this.blockWidth = this.width / this.game.COLS;
 
     this.drawAll();
-    this.previewFrame.updateSizes(this);
+    this.previewFrame.updateSizes();
+    this.holdFrame.updateSizes();
 
     //Restore the drawing styles lost due to resizing
     if (typeof this.game.currentBlock !== "undefined") this.setColours();
@@ -108,6 +113,7 @@ CanvasFrame.prototype.newGame = function() {
     this.dropChainBlock = false;
     
     this.previewNext();
+    this.holdFrame.reset();
     this.generateBlock();
   } else if (this.gameState == this.GameStateEnum.PLAYING) {
     this.draw();
@@ -154,7 +160,6 @@ CanvasFrame.prototype.updateGameState = function(gameState) {
     };
     this.gameState = gameState;
     gameStateText.innerHTML = gameState;
-    //statusText.style.opacity = 0.7;
     showGameState(this, "game-state-text");
   };
 };
@@ -180,7 +185,7 @@ CanvasFrame.prototype.previewNext = function() {
   this.game.customBlocks = document.getElementById("custom-block-check").checked;
   this.game.generateBlock();
   this.previewFrame.currentBlock = this.game.currentBlock;
-  this.previewFrame.showNextBlock(this);
+  this.previewFrame.showNextBlock();
 };
 
 /* Methods for controlling the current active tetris block */
@@ -211,6 +216,21 @@ CanvasFrame.prototype.rotateLeft = function() {
 
 CanvasFrame.prototype.rotateRight = function() {
   if (this.gameState == this.GameStateEnum.PLAYING) this.game.rotateRight();
+};
+
+CanvasFrame.prototype.holdBlock = function() {
+  if (typeof this.holdFrame.currentBlock !== "undefined") {
+    var tempBlock = this.game.currentBlock;
+    this.game.currentBlock = this.holdFrame.currentBlock;
+    this.holdFrame.currentBlock = tempBlock;
+    this.holdFrame.showNextBlock();
+    this.setColours();
+  } else {
+    cancelAnimationFrame(this.stopAnimation);
+    this.holdFrame.currentBlock = this.game.currentBlock;
+    this.holdFrame.showNextBlock();
+    this.generateBlock();
+  };
 };
 
 /* Methods for drawing and clearing the canvas */
@@ -354,6 +374,7 @@ CanvasFrame.prototype.updatePeripherals = function() {
 }
 
 function PreviewFrame() {
+  this.mainFrame;
   this.canvas;
   this.context;
   this.height;
@@ -368,7 +389,8 @@ function PreviewFrame() {
   this.currentBlock;
 };
 
-PreviewFrame.prototype.init = function() {
+PreviewFrame.prototype.init = function(frame) {
+  this.mainFrame = frame;
   this.canvas = document.getElementsByClassName("preview-frame")[0];
   this.context = this.canvas.getContext("2d");
 
@@ -377,7 +399,7 @@ PreviewFrame.prototype.init = function() {
   this.originY = 1;
 };
 
-PreviewFrame.prototype.updateSizes = function(frame) {
+PreviewFrame.prototype.updateSizes = function() {
   if (this.canvas.height != this.canvas.offsetHeight || this.canvas.width != this.canvas.offsetWidth) {
     this.canvas.height = this.canvas.offsetHeight;
     this.canvas.width = this.canvas.offsetWidth;
@@ -388,18 +410,38 @@ PreviewFrame.prototype.updateSizes = function(frame) {
     this.blockWidth = this.width / this.BLOCK_SIZE;
 
     //Redraw the preview/next block lost due to resizing
-    if (typeof this.currentBlock !== "undefined") this.showNextBlock(frame);
+    if (typeof this.currentBlock !== "undefined") this.showNextBlock();
   };
 };
 
-PreviewFrame.prototype.showNextBlock = function(frame) {
-  frame.clearAll.call(this);
-  frame.setColours.call(this, frame.coloursList[this.currentBlock.colour]);
+PreviewFrame.prototype.showNextBlock = function() {
+  this.mainFrame.clearAll.call(this);
+  this.mainFrame.setColours.call(this, this.mainFrame.coloursList[this.currentBlock.colour]);
   for (var r = this.currentBlock.MATRIX_SIZE - 1; r >= 0; --r) {
     for (var c = 0; c < this.currentBlock.MATRIX_SIZE; ++c) {
       if (this.currentBlock.matrix[r][c] != 0) {
-        frame.drawSquare.call(this, (this.originX + c) * this.blockWidth, (this.originY + r) * this.blockHeight);
+        this.mainFrame.drawSquare.call(this, (this.originX + c) * this.blockWidth, (this.originY + r) * this.blockHeight);
       };
     };
   };
+};
+
+function HoldFrame() { PreviewFrame.call(this); }
+
+HoldFrame.prototype.init = function(frame) {
+  this.mainFrame = frame;
+  this.canvas = document.getElementsByClassName("hold-frame")[0];
+  this.context = this.canvas.getContext("2d");
+
+  HoldFrame.prototype.updateSizes = frame.previewFrame.updateSizes.bind(this);
+  HoldFrame.prototype.showNextBlock = frame.previewFrame.showNextBlock.bind(this);
+
+  this.updateSizes();
+  this.originX = 1;
+  this.originY = 1;
+};
+
+HoldFrame.prototype.reset = function() {
+  delete this.currentBlock;
+  this.mainFrame.clearAll.call(this);
 };

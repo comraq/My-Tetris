@@ -32,6 +32,7 @@
         <button class="tetris-button" id="stop">Stop Game</button>
         <button class="tetris-button" id="pause-resume"></button>
       </div>
+
       <div class="peripheral-container">
         <div class="scoreboard"><p class="score-components" id="score-label">Score:</p><p class="score-components" id="score-field">&nbsp</p></div>
         <div class="level-container">
@@ -45,8 +46,8 @@
         <input id="level-check" type="checkbox" name="Level"><label class="peripheral-check">Fixed Level</label><br>
         <input id="gravity-check" type="checkbox" name="gravity" checked><label class="peripheral-check">Piece-wise Gravity</label>
         <input id="custom-block-check" type="checkbox" name="custom-block" checked><label class="peripheral-check">Custom Blocks</label>
-
       </div>
+
       <div class="info-container">
         <h1 class="info-header">Controls<h1>
         <p class="info-body info-col-1">
@@ -56,6 +57,7 @@
           Right-Arrow:<br>
           Z or , Key:<br>
           X or . Key:<br>
+          Shift Key:<br>
           <br>
           N Key:<br>
           Q Key:<br>
@@ -68,12 +70,14 @@
           Move Right<br>
           Rotate Left<br>
           Rotate Right<br>
+          Hold/Swap<br>
           <br>
           New Game<br>
           Quit<br>
           Pause/Resume<br>
         </p>
       </div>
+
       <div class="canvas-container">
         <div class="white-screen"></div>
         <div class="status-container">
@@ -83,10 +87,18 @@
         </div>
         <canvas class="tetris-frame"></canvas>
       </div>
-      <div class="preview-container">
-        <div class="white-screen preview-screen"></div>
-        <div class="preview-title">Next</div>
-        <canvas class="preview-frame"></canvas>
+
+      <div class="peripheral-side-container">
+        <div class="preview-container peripheral-side-item">
+          <div class="white-screen peripheral-side-screen preview-screen"></div>
+          <div class="preview-title peripheral-side-title">Next</div>
+          <canvas class="peripheral-side-frame preview-frame"></canvas>
+        </div>
+        <div class="hold-container peripheral-side-item">
+          <div class="white-screen peripheral-side-screen hold-screen"></div>
+          <div class="hold-title peripheral-side-title">Hold</div>
+          <canvas class="peripheral-side-frame hold-frame"></canvas>
+        </div>
       </div>
     </div>
 
