@@ -426,15 +426,15 @@ PreviewFrame.prototype.showNextBlock = function() {
   };
 };
 
-function HoldFrame() { PreviewFrame.call(this); }
+function HoldFrame() { PreviewFrame.call(this); };
+
+HoldFrame.prototype = Object.create(PreviewFrame.prototype);
+HoldFrame.prototype.constructor = HoldFrame;
 
 HoldFrame.prototype.init = function(frame) {
   this.mainFrame = frame;
   this.canvas = document.getElementsByClassName("hold-frame")[0];
   this.context = this.canvas.getContext("2d");
-
-  HoldFrame.prototype.updateSizes = frame.previewFrame.updateSizes.bind(this);
-  HoldFrame.prototype.showNextBlock = frame.previewFrame.showNextBlock.bind(this);
 
   this.updateSizes();
   this.originX = 1;
@@ -445,3 +445,4 @@ HoldFrame.prototype.reset = function() {
   delete this.currentBlock;
   this.mainFrame.clearAll.call(this);
 };
+
